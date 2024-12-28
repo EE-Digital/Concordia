@@ -3,7 +3,7 @@ import T_Server from "@/types/server";
 import { setServerChannels } from "./storage";
 
 export default async function createChannel(server: T_Server, channel: T_Channel, callback?: Function) {
-	await fetch(`${server.ip}/channels/create`, {
+	await fetch(`${server.ip}/channels/delete`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -16,7 +16,7 @@ export default async function createChannel(server: T_Server, channel: T_Channel
 			setServerChannels(server, channels);
 			if (callback) callback();
 		} else {
-			console.error("Failed to create channel");
+			console.error("Failed to delete channel");
 			console.error(res);
 		}
 	});

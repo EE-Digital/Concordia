@@ -21,7 +21,6 @@ export default function MainWindow() {
 
 	useEffect(() => {
 		if (selectedServer) getSocket(setNewMessage, selectedChannel as Channel, selectedServer as Server, newMessage);
-		console.log(selectedServer);
 	}, [selectedServer, selectedChannel]);
 
 	useEffect(() => {

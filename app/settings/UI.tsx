@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { View } from "react-native";
 import SettingsSwitchButton from "../../components/inputs/StyledSwitchButton";
-import { LocalSettings } from "../../handlers/storage";
+import { LocalSettings, updateServerData } from "../../handlers/storage";
 import ServerPageLabel from "../../components/ServerPageLabel";
+import StyledButton from "@/components/inputs/StyledButton";
 
 export default function UISettings(props: { preload: Function }) {
 	const [state, setState] = useState(props.preload().LinkInNative ?? false);
@@ -33,6 +34,14 @@ export default function UISettings(props: { preload: Function }) {
 			}}>
 			<ServerPageLabel title="UI/UX" />
 			<SettingsSwitchButton setState={setState} state={state} label="Open links in native browser" style={{ flexDirection: "row", width: 400, justifyContent: "space-between" }} onPress={sendUpdate} />
+			<View style={{ height: 5 }} />
+			<StyledButton
+				label={"Update server data"}
+				width={150}
+				onPress={() => {
+					updateServerData();
+				}}
+			/>
 		</View>
 	);
 }

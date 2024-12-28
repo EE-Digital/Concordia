@@ -182,7 +182,7 @@ const MessageCard = memo((props: MessageCardProps) => {
 				<View style={{ flexDirection: "row", alignItems: "flex-end" }}>
 					<View style={{ width: 30, height: 30, borderRadius: 20, marginRight: 5, overflow: "hidden" }}>{props.message.user.profilePicture ? <Image source={{ uri: `${props.server.ip}/users/pfp/${props.message.user.profilePicture}`, width: 30, height: 30 }} /> : null}</View>
 					<Text style={{ color: "#fff", fontWeight: "500", marginBottom: 5 }}>{props.message.user.nickname ?? props.message.user.username}</Text>
-					<Text style={{ color: "#ddd", fontSize: 10, marginBottom: 5 }}>{timestamp}</Text>
+					<Text style={{ color: "#ddd", fontSize: 10, marginBottom: 6, marginLeft: 5 }}>{timestamp}</Text>
 				</View>
 			)}
 			<Pressable style={{ cursor: "auto" }} onLongPress={() => Platform.OS != "web" && copyToClipboard(props.message.text)} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)}>
@@ -227,8 +227,8 @@ const ProcessedMessage = memo((props: ProcessedMessageProps) => {
 
 	if (gif) {
 		if (gif.width && gif.height) {
-			let limit = 50;
-			if (Platform.OS == "web") limit = 250;
+			let limit = 100;
+			if (Platform.OS == "web") limit = 500;
 			if (gif.width > props.dimensions.width - limit) {
 				width = props.dimensions.width - limit;
 				const aspectRatio = gif.height / gif.width;
@@ -246,17 +246,19 @@ const ProcessedMessage = memo((props: ProcessedMessageProps) => {
 	return (
 		<View>
 			<Text>
-				{parts.map((part, index) =>
-					URLs.includes(part) ? (
-						<Pressable key={`link-${index}`} onPress={() => Linking.openURL(part)}>
-							<Text style={{ color: Colors.dark.secondary, textDecorationLine: "underline" }}>{part + " "}</Text>
-						</Pressable>
-					) : (
-						<Text key={`text-${index}`}>{part + " "}</Text>
-					),
-				)}
+				{URLs[0] == ""
+					? text
+					: parts.map((part, index) =>
+							URLs.includes(part) ? (
+								<Pressable key={`link-${index}`} onPress={() => Linking.openURL(part)}>
+									<Text style={{ color: Colors.dark.secondary, textDecorationLine: "underline" }}>{part + " "}</Text>
+								</Pressable>
+							) : (
+								<Text key={`text-${index}`}>{part + " "}</Text>
+							),
+					  )}
 			</Text>
-			{gif ? <ExpoImage source={{ uri: gif.source }} cachePolicy={"memory"} contentFit="fill" style={{ width: width, height: height, marginTop: 0, marginLeft: 5, marginBottom: 5, borderRadius: 5 }} /> : null}
+			{gif ? <ExpoImage source={{ uri: gif.source }} cachePolicy={"memory"} contentFit="fill" style={{ width: width, height: height, marginTop: -10, marginLeft: 5, marginBottom: 5, borderRadius: 5 }} /> : null}
 		</View>
 	);
 });

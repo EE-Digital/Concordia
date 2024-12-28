@@ -5,7 +5,6 @@ import SettingsTextInput from "../../../components/inputs/StyledTextInput";
 
 export default function GeneralServerSettings(props: { server: Server }) {
 	const server: Server = props.server;
-	console.log(server);
 
 	return (
 		<View
@@ -14,7 +13,7 @@ export default function GeneralServerSettings(props: { server: Server }) {
 				width: "100%",
 			}}>
 			<ServerPageLabel title="General" />
-			<SettingsTextInput label="Description" width={300} text={server.title} />
+			<SettingsTextInput label="Title" width={300} text={server.title} />
 		</View>
 	);
 }
