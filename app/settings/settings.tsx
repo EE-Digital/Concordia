@@ -73,7 +73,6 @@ export default function SettingsScreen() {
 					flex: 1,
 					flexDirection: "row",
 				}}>
-				s
 				<View>
 					<View style={{ marginLeft: 20, marginTop: 20 }}>
 						<ReturnArrow />
