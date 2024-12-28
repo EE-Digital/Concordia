@@ -41,11 +41,7 @@ export default function ServerSettingsScreen() {
 				{
 					index: 1,
 					title: "Channels",
-					view: (
-						<View>
-							<ChannelServerSettings key={1} server={selectedServer} triggerUpdate={() => setUpdate(true)} />
-						</View>
-					),
+					view: <ChannelServerSettings key={1} server={selectedServer} triggerUpdate={() => setUpdate(true)} />,
 				},
 			],
 		},
