@@ -7,6 +7,7 @@ type T_Server = {
 	ip: string;
 	iconURL?: string;
 	channels: T_Channel[];
+	lastUpdated?: number;
 };
 
 export default T_Server;

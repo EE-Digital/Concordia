@@ -17,16 +17,11 @@ export default function ServerSettingsScreen() {
 	const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
-		let ignore = false;
 		LocalSettings.get().then((settings) => {
 			setSelectedServer(settings.servers.find((server) => server.id == selectedServerPublic.id) ?? { id: 0, title: "Unknown", channels: [], accessToken: "", ip: "" });
 			console.log(selectedServer);
 		});
 		setUpdate(false);
-
-		return () => {
-			ignore = true;
-		};
 	}, [update]);
 
 	const settings = [

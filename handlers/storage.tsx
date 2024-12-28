@@ -43,6 +43,13 @@ class LocalSettings {
 	static async get() {
 		if (!LocalSettings.settings) {
 			LocalSettings.settings = await getLocalSettings();
+
+			// Check if server data is outdated
+			LocalSettings.settings.servers.forEach((server) => {
+				if (server.lastUpdated == undefined) return (server.lastUpdated = new Date().getTime());
+				// 1 hour
+				if (new Date().getTime() - server.lastUpdated > 1000 * 60 * 60) updateServerData();
+			});
 		}
 
 		return LocalSettings.settings;
@@ -140,9 +147,10 @@ const updateServerData = async () => {
 	// Use map to return an array of promises and await them with Promise.all
 	const updatedServers: Server[] = await Promise.all(
 		settings.servers.map(async (server) => {
-			const response = await fetch(server.ip);
+			const response = await fetch(server.ip); // Fetch server data
 
-			const json = await response.json();
+			const json = await response.json(); // Parse response as JSON
+			// Create new server object
 			const result: Server = {
 				id: server.id,
 				accessToken: server.accessToken,
@@ -150,6 +158,7 @@ const updateServerData = async () => {
 				ip: server.ip,
 				iconURL: json.iconURL,
 				channels: json.channels,
+				lastUpdated: new Date().getTime(),
 			};
 			return result;
 		}),
