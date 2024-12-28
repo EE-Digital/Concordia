@@ -51,6 +51,7 @@ class LocalSettings {
 				if (new Date().getTime() - server.lastUpdated > 1000 * 60 * 60) updateServerData();
 			});
 		}
+		console.log(LocalSettings.settings);
 
 		return LocalSettings.settings;
 	}
@@ -59,7 +60,7 @@ class LocalSettings {
 		if (Platform.OS == "web") {
 			const PORT = require("../electron/LocalServer.json").port;
 			try {
-				await fetch(`http://127.0.0.1:${PORT}/settings/`, {
+				await fetch(`http://127.0.0.1:${PORT}/settings`, {
 					method: "PUT",
 					headers: {
 						"Accept": "*/*",
@@ -72,10 +73,12 @@ class LocalSettings {
 			} catch (e) {
 				console.error(e);
 			}
+			return newData;
+		} else {
+			await AsyncStorage.setItem("localSettings", JSON.stringify(newData));
+			await this.update();
+			return newData;
 		}
-		await AsyncStorage.setItem("localSettings", JSON.stringify(newData));
-		await this.update();
-		return newData;
 	}
 
 	static async update() {
@@ -147,43 +150,33 @@ const updateServerData = async () => {
 	// Use map to return an array of promises and await them with Promise.all
 	const updatedServers: Server[] = await Promise.all(
 		settings.servers.map(async (server) => {
-			const response = await fetch(server.ip); // Fetch server data
+			const response = await fetch(server.ip, {
+				headers: {
+					accesstoken: server.accessToken,
+				},
+			}); // Fetch server data
 
 			const json = await response.json(); // Parse response as JSON
+
 			// Create new server object
 			const result: Server = {
 				id: server.id,
 				accessToken: server.accessToken,
+				user: json.user,
 				title: json.title,
 				ip: server.ip,
 				iconURL: json.iconURL,
 				channels: json.channels,
 				lastUpdated: new Date().getTime(),
 			};
+			console.log(result);
+
 			return result;
 		}),
 	);
 
-	if (Platform.OS == "web") {
-		const PORT = require("../electron/LocalServer.json").port;
-		try {
-			await fetch(`http://127.0.0.1:${PORT}/settings/setServers`, {
-				method: "POST",
-				headers: {
-					"Accept": "*/*",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					newServers: updatedServers,
-				}),
-			});
-		} catch (e) {
-			console.error(e);
-		}
-	}
-
+	settings.servers = updatedServers;
 	await LocalSettings.save(settings);
-	await LocalSettings.update();
 };
 
 const getLocalSettings = async () => {
@@ -213,6 +206,7 @@ const getLocalSettings = async () => {
 	if (settings.servers) return settings;
 	else return newLocal;
 };
+
 const setServerChannels = async (server: Server, channels: any) => {
 	let settings = await LocalSettings.get();
 	let updateServerIndex = settings.servers.findIndex((item) => item.id == server.id);
