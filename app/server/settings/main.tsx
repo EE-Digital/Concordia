@@ -19,7 +19,6 @@ export default function ServerSettingsScreen() {
 	useEffect(() => {
 		LocalSettings.get().then((settings) => {
 			setSelectedServer(settings.servers.find((server) => server.id == selectedServerPublic.id) ?? { id: 0, title: "Unknown", channels: [], accessToken: "", ip: "" });
-			console.log(selectedServer);
 		});
 		setUpdate(false);
 	}, [update]);

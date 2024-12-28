@@ -51,7 +51,6 @@ class LocalSettings {
 				if (new Date().getTime() - server.lastUpdated > 1000 * 60 * 60) updateServerData();
 			});
 		}
-		console.log(LocalSettings.settings);
 
 		return LocalSettings.settings;
 	}
@@ -169,8 +168,6 @@ const updateServerData = async () => {
 				channels: json.channels,
 				lastUpdated: new Date().getTime(),
 			};
-			console.log(result);
-
 			return result;
 		}),
 	);

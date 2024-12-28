@@ -19,11 +19,10 @@ const getGifs = async (server: T_Server, query: string, setGifs: Function) => {
 		const response = await fetch(`${server.ip}/api/gifs?q=${query}`);
 		const json = await response.json();
 		if (response.status !== 200) throw new Error("Failed to fetch");
-		console.log("setting gif");
 
 		setGifs(json);
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 	}
 };
 

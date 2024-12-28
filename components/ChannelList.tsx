@@ -59,7 +59,7 @@ export default function ChannelList(props: ChanneListProps) {
 		<View style={{ paddingHorizontal: 5, flex: 1 }}>
 			<Pressable
 				onPress={() => {
-					router.push("/server/settings/main" as any);
+					if (props.server.user && props.server.user.roles.find((role) => role.name == "admin")) router.push("/server/settings/main" as any);
 				}}
 				onPointerEnter={() => setTitleHover(true)}
 				onPointerLeave={() => setTitleHover(false)}>

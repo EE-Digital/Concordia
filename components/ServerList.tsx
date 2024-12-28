@@ -14,7 +14,6 @@ export default function ServerList(props: { setServer: Function; selectedServer?
 		let updatedServer = server;
 		LocalSettings.get().then((settings) => {
 			updatedServer = settings.servers.find((s) => s.id == server.id) ?? server;
-			console.log(updatedServer);
 			props.setServer(updatedServer);
 			selectedServerPublic = updatedServer;
 		});

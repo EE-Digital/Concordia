@@ -5,7 +5,6 @@ import SettingsTextInput from "../../../components/inputs/StyledTextInput";
 
 export default function GeneralServerSettings(props: { server: Server }) {
 	const server: Server = props.server;
-	console.log(server);
 
 	return (
 		<View

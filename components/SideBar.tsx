@@ -39,7 +39,7 @@ export default function SideBar(props: SideBarProps) {
 				)}
 				<ServerList setServer={props.setSelectedServer} selectedServer={props.server} servers={props.servers} setUpdate={props.setUpdate} />
 			</View>
-			<UserCard user={props.user} />
+			<UserCard user={props.user} server={props.server} />
 		</View>
 	);
 }

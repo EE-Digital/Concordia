@@ -13,12 +13,11 @@ export default async function createChannel(server: T_Server, channel: T_Channel
 	}).then(async (res) => {
 		if (res.status == 200) {
 			const channels = await res.json();
-			console.log(channels);
 			setServerChannels(server, channels);
 			if (callback) callback();
 		} else {
 			console.error("Failed to create channel");
-			console.log(res);
+			console.error(res);
 		}
 	});
 }

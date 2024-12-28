@@ -4,12 +4,18 @@ import { View, Pressable, Text } from "react-native";
 import { Image as ExpoImage } from "expo-image";
 import { Colors } from "../constants/Colors";
 import T_User from "../types/user";
+import { useEffect, useState } from "react";
+import T_Server from "@/types/server";
 
-export default function UserCard(props: { user?: T_User }) {
+export default function UserCard(props: { user?: T_User; server?: T_Server }) {
+	const [profilePicture, setProfilePicture] = useState({ uri: props?.server?.user?.profilePicture ? `${props.server.ip}/users/pfp/${props.server.user.profilePicture}` : "https://media1.tenor.com/m/tCL3HGcaV4UAAAAd/raccoon-dance.gif" });
+	useEffect(() => {
+		if (props.server?.user?.profilePicture) setProfilePicture({ uri: `${props.server.ip}/users/pfp/${props.server.user.profilePicture}` });
+	}, [props.server]);
 	return (
 		<View style={{ alignSelf: "flex-end", width: "100%", paddingHorizontal: 10, height: 60, backgroundColor: Colors.dark.background, flexDirection: "row", justifyContent: "flex-start", alignItems: "center", paddingBottom: 10 }}>
-			{/* <ExpoImage source="https://media1.tenor.com/m/tCL3HGcaV4UAAAAd/raccoon-dance.gif" style={{ width: 45, height: 45 }} /> */}
-			<View style={{ width: 10 }} />
+			<ExpoImage source={profilePicture} style={{ width: 45, height: 45, borderRadius: 10 }} />
+			<View style={{ flex: 1 }} />
 			<Text style={{ color: Colors.dark.text, fontWeight: 600, fontSize: 18 }}>{props.user?.username ?? ""}</Text>
 			<View style={{ flex: 1 }} />
 			<Pressable
