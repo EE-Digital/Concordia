@@ -5,6 +5,7 @@ const cors = require('cors');
 const settings = require('./handlers/settings.js');
 
 const localserver = express();
+
 const PORT = require('./LocalServer.json').port;
 
 // Serve static files from the 'dist' directory
