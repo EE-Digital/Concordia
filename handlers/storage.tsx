@@ -3,7 +3,7 @@ import T_User from "../types/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
-export class User {
+class User {
 	static user: T_User = {} as T_User;
 
 	static async getUserObject() {
@@ -32,7 +32,7 @@ const getUser = async () => {
 	return user;
 };
 
-export type TypeLocalSettings = {
+type TypeLocalSettings = {
 	servers: Server[];
 	LinkInNative: boolean;
 };
@@ -49,8 +49,24 @@ class LocalSettings {
 	}
 
 	static async save(newData: typeof this.settings) {
+		if (Platform.OS == "web") {
+			const PORT = require("../electron/LocalServer.json").port;
+			try {
+				await fetch(`http://127.0.0.1:${PORT}/settings/`, {
+					method: "PUT",
+					headers: {
+						"Accept": "*/*",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						newData,
+					}),
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		}
 		await AsyncStorage.setItem("localSettings", JSON.stringify(newData));
-
 		await this.update();
 		return newData;
 	}
@@ -161,8 +177,6 @@ const updateServerData = async () => {
 	await LocalSettings.update();
 };
 
-export { LocalSettings, addServer, updateServerData, remServer };
-
 const getLocalSettings = async () => {
 	// If running on web, get settings from electron's storage
 	if (Platform.OS == "web")
@@ -190,3 +204,12 @@ const getLocalSettings = async () => {
 	if (settings.servers) return settings;
 	else return newLocal;
 };
+const setServerChannels = async (server: Server, channels: any) => {
+	let settings = await LocalSettings.get();
+	let updateServerIndex = settings.servers.findIndex((item) => item.id == server.id);
+
+	settings.servers[updateServerIndex].channels = channels;
+	await LocalSettings.save(settings);
+};
+
+export { User, TypeLocalSettings, LocalSettings, addServer, updateServerData, remServer, setServerChannels };

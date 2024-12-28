@@ -3,6 +3,14 @@ import User from "../types/user";
 import Server from "../types/server";
 import Channel from "../types/channel";
 import { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { setServerChannels } from "@/handlers/storage";
+
+let updateChannels = false;
+const triggerUpdateChannels = () => {
+	updateChannels = true;
+};
+export { triggerUpdateChannels };
 
 interface ChanneListProps {
 	selected?: Channel;
@@ -13,13 +21,22 @@ interface ChanneListProps {
 
 export default function ChannelList(props: ChanneListProps) {
 	const [channels, setChannels] = useState<Channel[]>(props.server.channels ?? []);
+	const [titleHover, setTitleHover] = useState(false);
+
+	useEffect(() => {
+		if (updateChannels) {
+			getChannels();
+			updateChannels = false;
+		}
+	}, [updateChannels]);
 
 	const getChannels = async () => {
 		try {
-			const request = await fetch(`${props.server.ip}/channels/get`);
+			const request = await fetch(`${props.server.ip}/channels`);
 			const json = (await request.json()) as Channel[];
 
 			setChannels(json);
+			setServerChannels(props.server, json);
 			if (json.length > 0) props.setSelected(json[0]);
 		} catch (e) {
 			setChannels([]);
@@ -30,22 +47,35 @@ export default function ChannelList(props: ChanneListProps) {
 		getChannels();
 	}, [props.server]);
 
+	useEffect(() => {
+		getChannels();
+	}, []);
+
 	const handleChange = (channel: Channel) => {
 		props.setSelected(channel);
 	};
 
 	return (
 		<View style={{ paddingHorizontal: 5, flex: 1 }}>
-			<View
-				style={{
-					height: 50,
-					borderBottomColor: "white",
-					justifyContent: "center",
-					marginBottom: 10,
-					marginLeft: 5,
-				}}>
-				<Text style={{ color: "white", fontSize: 24 }}>{props.server.title}</Text>
-			</View>
+			<Pressable
+				onPress={() => {
+					router.push("/server/settings/main" as any);
+				}}
+				onPointerEnter={() => setTitleHover(true)}
+				onPointerLeave={() => setTitleHover(false)}>
+				<View
+					style={{
+						height: 50,
+						borderBottomColor: "white",
+						justifyContent: "center",
+						paddingHorizontal: 10,
+						marginBottom: 10,
+						backgroundColor: titleHover ? "#FFFFFF22" : "transparent",
+						borderRadius: 5,
+					}}>
+					<Text style={{ color: "white", fontSize: 24, textAlign: "center" }}>{props.server.title}</Text>
+				</View>
+			</Pressable>
 			{channels.length > 0 ? (
 				<FlatList
 					data={channels}

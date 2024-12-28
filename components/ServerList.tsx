@@ -5,10 +5,21 @@ import { LocalSettings, remServer } from "../handlers/storage";
 import AddServerModal from "./modals/addServer";
 import Server from "../types/server";
 
+let selectedServerPublic: Server;
+
+export { selectedServerPublic };
+
 export default function ServerList(props: { setServer: Function; selectedServer?: Server; servers: Server[]; setUpdate: Function }) {
 	const handleServerSelect = (server: Server) => {
-		props.setServer(server);
+		let updatedServer = server;
+		LocalSettings.get().then((settings) => {
+			updatedServer = settings.servers.find((s) => s.id == server.id) ?? server;
+			props.setServer(updatedServer);
+			selectedServerPublic = updatedServer;
+		});
 	};
+
+	selectedServerPublic = props.selectedServer ?? props.servers[0];
 
 	return (
 		<View style={{ marginHorizontal: 5 }}>

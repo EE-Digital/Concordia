@@ -24,6 +24,24 @@ const handleUpdates = (localserver) => {
         return res.send(settings);
     })
 
+    // set settings
+    localserver.put('/settings', async (req, res) => {
+        const { newData } = req.body;
+
+        if (newData.LinkInNative != undefined) {
+            LinkInNative = newData.LinkInNative;
+            await storage.set('LinkInNative', newData.LinkInNative);
+        }
+
+        if (newData.servers != undefined) {
+            servers = newData.servers;
+            await storage.set('servers', newData.servers);
+        }
+
+        const response = await loadSettings();
+        return res.send(response);
+    });
+
     // open links in new window?
     localserver.post('/settings/setNewWindow', async (req, res) => {
         const { newState } = req.body;
