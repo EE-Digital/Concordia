@@ -13,7 +13,7 @@ export default function GeneralServerSettings(props: { server: Server }) {
 				width: "100%",
 			}}>
 			<ServerPageLabel title="General" />
-			<SettingsTextInput label="Description" width={300} text={server.title} />
+			<SettingsTextInput label="Title" width={300} text={server.title} />
 		</View>
 	);
 }
