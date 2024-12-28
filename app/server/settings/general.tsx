@@ -3,8 +3,8 @@ import ServerPageLabel from "../../../components/ServerPageLabel";
 import Server from "../../../types/server";
 import SettingsTextInput from "../../../components/inputs/StyledTextInput";
 
-export default function GeneralServerSettings(props: { getServer: Function }) {
-	const server: Server = props.getServer();
+export default function GeneralServerSettings(props: { server: Server }) {
+	const server: Server = props.server;
 	console.log(server);
 
 	return (

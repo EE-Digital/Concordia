@@ -1,17 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
 import { View, Animated, Easing, Pressable, Text, Image } from "react-native";
-import { remServer } from "../handlers/storage";
+import { LocalSettings, remServer } from "../handlers/storage";
 import AddServerModal from "./modals/addServer";
 import Server from "../types/server";
+
 let selectedServerPublic: Server;
 
 export { selectedServerPublic };
 
 export default function ServerList(props: { setServer: Function; selectedServer?: Server; servers: Server[]; setUpdate: Function }) {
 	const handleServerSelect = (server: Server) => {
-		props.setServer(server);
-		selectedServerPublic = server;
+		let updatedServer = server;
+		LocalSettings.get().then((settings) => {
+			updatedServer = settings.servers.find((s) => s.id == server.id) ?? server;
+			props.setServer(updatedServer);
+			selectedServerPublic = updatedServer;
+		});
 	};
 
 	selectedServerPublic = props.selectedServer ?? props.servers[0];

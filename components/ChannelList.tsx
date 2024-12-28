@@ -4,6 +4,13 @@ import Server from "../types/server";
 import Channel from "../types/channel";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
+import { setServerChannels } from "@/handlers/storage";
+
+let updateChannels = false;
+const triggerUpdateChannels = () => {
+	updateChannels = true;
+};
+export { triggerUpdateChannels };
 
 interface ChanneListProps {
 	selected?: Channel;
@@ -16,12 +23,20 @@ export default function ChannelList(props: ChanneListProps) {
 	const [channels, setChannels] = useState<Channel[]>(props.server.channels ?? []);
 	const [titleHover, setTitleHover] = useState(false);
 
+	useEffect(() => {
+		if (updateChannels) {
+			getChannels();
+			updateChannels = false;
+		}
+	}, [updateChannels]);
+
 	const getChannels = async () => {
 		try {
-			const request = await fetch(`${props.server.ip}/channels/get`);
+			const request = await fetch(`${props.server.ip}/channels`);
 			const json = (await request.json()) as Channel[];
 
 			setChannels(json);
+			setServerChannels(props.server, json);
 			if (json.length > 0) props.setSelected(json[0]);
 		} catch (e) {
 			setChannels([]);
@@ -31,6 +46,10 @@ export default function ChannelList(props: ChanneListProps) {
 	useEffect(() => {
 		getChannels();
 	}, [props.server]);
+
+	useEffect(() => {
+		getChannels();
+	}, []);
 
 	const handleChange = (channel: Channel) => {
 		props.setSelected(channel);
