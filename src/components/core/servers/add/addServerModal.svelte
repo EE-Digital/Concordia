@@ -1,7 +1,9 @@
 <script lang="ts">
+	import apiRequest from "$lib/apiRequest";
 	import { debounce } from "$lib/debounce";
 	import Modal from "../../modal.svelte";
 	import { serverList } from "../getServers.svelte";
+	import Serverlist from "../serverlist.svelte";
 
 	let { open = $bindable(false) } = $props();
 
@@ -44,36 +46,39 @@
 	});
 
 	const handleLogin = async () => {
-		const loginData = await fetch(`${formData.serverURL}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: formData.username,
-				password: formData.password,
-			}),
+		const data = await apiRequest("POST", `${formData.serverURL}/login`, {
+			username: formData.username,
+			password: formData.password,
 		});
 
-		// serverList.servers.push({
-		// 	serverUrl: formData.serverURL,
-		// 	username: formData.username,
-		// 	token: loginData.token,
-		// });
-		console.log(loginData);
-	};
-	const handleRegister = async () => {
-		const registerData = await fetch(`${formData.serverURL}/register`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: formData.username,
-				password: formData.password,
-			}),
+		serverList.servers.push({
+			name: server.name,
+			iconUrl: server.iconUrl ?? "",
+			serverUrl: formData.serverURL,
+			username: formData.username,
+			token: data.token,
 		});
-		console.log(registerData);
+
+		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+	};
+
+	const handleRegister = async () => {
+		const data = await apiRequest("POST", `${formData.serverURL}/register`, {
+			username: formData.username,
+			password: formData.password,
+		});
+
+		if (serverList.servers.find((server) => server.serverUrl === formData.serverURL)) return;
+
+		serverList.servers.push({
+			name: server.name,
+			iconUrl: server.iconUrl ?? "",
+			serverUrl: formData.serverURL,
+			username: formData.username,
+			token: data.token,
+		});
+
+		localStorage.setItem("servers", JSON.stringify(serverList.servers));
 	};
 </script>
 
