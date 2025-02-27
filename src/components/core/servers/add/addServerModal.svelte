@@ -1,7 +1,7 @@
 <script lang="ts">
 	import apiRequest from "$lib/apiRequest";
 	import { debounce } from "$lib/debounce";
-	import Modal from "../../modal.svelte";
+	import Modal from "../../../modal.svelte";
 	import { serverList } from "../getServers.svelte";
 	import Serverlist from "../serverlist.svelte";
 
