@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import Sidebar from "../components/core/sidebar.svelte";
-	import Modal from "../components/modal.svelte";
 
 	onMount(() => {});
 </script>

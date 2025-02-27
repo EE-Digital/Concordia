@@ -3,16 +3,19 @@
 	import Settings from "~icons/lucide/settings";
 </script>
 
-<button onclick={() => goto("/settings/user")} class="squareish">
+<a href="/settings/identities" class="squareish">
 	<Settings color="white" />
-</button>
+</a>
 
 <style>
-	button {
+	a {
 		margin-top: 0.5rem;
 	}
 
 	.squareish {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		border: none;
 		cursor: pointer;
 		width: 2rem;
