@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from "$app/state";
+
 	const settings = [{ name: "Identities", path: "/settings/identities" }];
 </script>
 
@@ -11,6 +13,10 @@
 </div>
 
 <style>
+	div {
+		margin-left: 0.5rem;
+	}
+
 	h1 {
 		margin: 0;
 		margin-bottom: 1rem;
