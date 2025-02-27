@@ -12,7 +12,7 @@
 <svelte:document onkeydown={escKeyHandler} />
 
 {#if open}
-	<div class="background">
+	<div onclick={() => (open = false)} class="background">
 		<div class="content">
 			{@render children()}
 		</div>

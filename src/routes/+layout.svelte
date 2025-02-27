@@ -12,6 +12,7 @@
 		overflow: hidden;
 		height: 100vh;
 		width: 100vw;
+		/* zoom: 2; */
 
 		--accent-color: #8f25ab;
 		--on-accent-color: #fff;

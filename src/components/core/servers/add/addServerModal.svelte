@@ -84,34 +84,38 @@
 
 <Modal bind:open>
 	<h1>Add Server</h1>
-	<div>
-		{#if server.iconUrl}
-			<div class="center">
-				<img src={server.iconUrl} alt="Server Icon" class="image" />
+	<div class="modal">
+		<div class="left">
+			<div>
+				{#if server.iconUrl}
+					<div class="center">
+						<img src={server.iconUrl} alt="Server Icon" class="image" />
+					</div>
+				{/if}
+				{#if server.name}
+					<h2>{server.name}</h2>
+				{/if}
+				{#if server.description}
+					<p>{server.description}</p>
+				{/if}
 			</div>
-		{/if}
-		{#if server.name}
-			<h2>{server.name}</h2>
-		{/if}
-		{#if server.description}
-			<p>{server.description}</p>
-		{/if}
-	</div>
-	<form>
-		<label>Server URL:</label>
-		<input type="text" bind:value={formData.serverURL} placeholder="https://ca.example.com" />
-
-		<label>Username:</label>
-		<input type="text" bind:value={formData.username} placeholder="ACoolName!" />
-
-		<label>Password:</label>
-		<input type="password" bind:value={formData.password} placeholder="****" />
-
-		<div class="buttonRow">
-			<button onclick={handleLogin}>Login</button>
-			<button onclick={handleRegister}>Register</button>
 		</div>
-	</form>
+		<form>
+			<label>Server URL:</label>
+			<input type="text" bind:value={formData.serverURL} placeholder="https://ca.example.com" />
+
+			<label>Username:</label>
+			<input type="text" bind:value={formData.username} placeholder="ACoolName!" />
+
+			<label>Password:</label>
+			<input type="password" bind:value={formData.password} placeholder="****" />
+
+			<div class="buttonRow">
+				<button onclick={handleLogin}>Login</button>
+				<button onclick={handleRegister}>Register</button>
+			</div>
+		</form>
+	</div>
 </Modal>
 
 <style>
@@ -119,7 +123,6 @@
 		margin: 0;
 		font-weight: 600;
 		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
 	}
 
 	h2 {
@@ -167,5 +170,14 @@
 		border-radius: 0.5rem;
 		overflow: hidden;
 		object-fit: cover;
+	}
+
+	.left {
+		margin-right: 1rem;
+	}
+
+	.modal {
+		display: flex;
+		flex-direction: row;
 	}
 </style>
