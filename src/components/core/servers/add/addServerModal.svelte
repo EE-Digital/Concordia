@@ -6,6 +6,7 @@
 	import Serverlist from "../serverlist.svelte";
 
 	let { open = $bindable(false) } = $props();
+	let serverFound = $state(false);
 
 	let server = $state({
 		iconUrl: "",
@@ -19,6 +20,13 @@
 		password: "",
 	});
 
+	const closeForm = () => {
+		formData.username = "";
+		formData.password = "";
+		formData.serverURL = "";
+		open = false;
+	};
+
 	const fetchServerData = async (url: string) => {
 		try {
 			const serverData = await fetch(`${url}/status`, {
@@ -29,13 +37,17 @@
 			});
 
 			const data = await serverData.json();
-			console.log(data);
+			if (serverData.status !== 200) {
+				serverFound = false;
+				return;
+			} else serverFound = true;
 
 			server.iconUrl = data.iconUrl;
 			server.name = data.name;
 			server.description = data.description;
 		} catch (e) {
 			console.error("Server not found at URL:", url);
+			serverFound = false;
 		}
 	};
 
@@ -46,6 +58,9 @@
 	});
 
 	const handleLogin = async () => {
+		if (!serverFound) return;
+		console.log(serverFound);
+
 		const data = await apiRequest("POST", `${formData.serverURL}/login`, {
 			username: formData.username,
 			password: formData.password,
@@ -60,9 +75,11 @@
 		});
 
 		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		closeForm();
 	};
 
 	const handleRegister = async () => {
+		if (!serverFound) return;
 		const data = await apiRequest("POST", `${formData.serverURL}/register`, {
 			username: formData.username,
 			password: formData.password,
@@ -79,6 +96,7 @@
 		});
 
 		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		closeForm();
 	};
 </script>
 
