@@ -5,17 +5,10 @@
 	import ServerWidget from "./ServerWidget.svelte";
 </script>
 
-<main>
+<div class="mt-2 ml-2">
 	{#each serverList.servers as server}
 		<ServerWidget {server} />
 	{/each}
 	<AddServer />
 	<Settings />
-</main>
-
-<style>
-	main {
-		display: flex;
-		flex-direction: column;
-	}
-</style>
+</div>

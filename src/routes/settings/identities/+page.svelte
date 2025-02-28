@@ -8,7 +8,7 @@
 	});
 </script>
 
-<div class="ml-2 mt-2 flex">
+<div class="ml-2 mt-2 flex flex-wrap">
 	{#each serverList.servers as server}
 		<IdentityCard {server} />
 	{/each}

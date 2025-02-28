@@ -21,7 +21,7 @@
 
 	const fetchServerData = async (url: string) => {
 		try {
-			const serverData = await fetch(`${url}`, {
+			const serverData = await fetch(`${url}/status`, {
 				method: "GET",
 				headers: {
 					Accept: "*/*",

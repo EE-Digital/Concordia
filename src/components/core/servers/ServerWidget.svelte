@@ -8,7 +8,7 @@
 	const { server }: Props = $props();
 </script>
 
-<div>
+<div class="cursor-pointer">
 	<div>
 		<img src={server.iconUrl} alt={server.name} />
 	</div>
