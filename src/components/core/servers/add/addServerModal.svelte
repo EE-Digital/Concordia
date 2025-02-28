@@ -3,12 +3,13 @@
 	import { debounce } from "$lib/debounce";
 	import Modal from "../../../modal.svelte";
 	import { serverList } from "../getServers.svelte";
-	import Serverlist from "../serverlist.svelte";
+	import Serverlist from "../../sidebar.svelte";
 
 	let { open = $bindable(false) } = $props();
 	let serverFound = $state(false);
 
 	let server = $state({
+		id: "",
 		iconUrl: "",
 		name: "",
 		description: "",
@@ -42,6 +43,7 @@
 				return;
 			} else serverFound = true;
 
+			server.id = data.id;
 			server.iconUrl = data.iconUrl;
 			server.name = data.name;
 			server.description = data.description;
@@ -59,14 +61,16 @@
 
 	const handleLogin = async () => {
 		if (!serverFound) return;
-		console.log(serverFound);
 
 		const data = await apiRequest("POST", `${formData.serverURL}/login`, {
 			username: formData.username,
 			password: formData.password,
 		});
 
+		if (!data) return; // TODO add error handler
+
 		serverList.servers.push({
+			id: server.id,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,
@@ -85,9 +89,11 @@
 			password: formData.password,
 		});
 
+		if (!data) return; // TODO add error handler
 		if (serverList.servers.find((server) => server.serverUrl === formData.serverURL)) return;
 
 		serverList.servers.push({
+			id: server.id,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,

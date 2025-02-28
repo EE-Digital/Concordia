@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import Sidebar from "../components/core/sidebar.svelte";
 
-	onMount(() => {});
+	onMount(() => {
+		window.location.href = "/servers/1";
+	});
 </script>
 
-<!-- svelte-ignore a11y_media_has_caption -->
-<main class="container">
-	<Sidebar />
-</main>
-
-<style>
-</style>
+<h1>Loading...</h1>

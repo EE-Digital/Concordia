@@ -8,7 +8,7 @@ export default async function apiRequest(method: "POST" | "GET", url: string, bo
 			body: body ? JSON.stringify(body) : undefined,
 		});
 
-		if (response.status !== 200) return response.status;
+		if (response.status !== 200) return false;
 
 		const data = await response.json();
 		return data;

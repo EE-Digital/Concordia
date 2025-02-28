@@ -9,9 +9,11 @@
 </script>
 
 <div class="cursor-pointer">
-	<div>
-		<img src={server.iconUrl} alt={server.name} />
-	</div>
+	<a href={`/servers/${server.id}`}>
+		<div>
+			<img src={server.iconUrl} alt={server.name} />
+		</div>
+	</a>
 </div>
 
 <style>
