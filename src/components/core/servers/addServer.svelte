@@ -8,19 +8,14 @@
 	}
 </script>
 
-<button onclick={addServer} class="squareish">
+<button onclick={addServer} class="squareish flex justify-center items-center">
 	<Plus color="white" />
 </button>
 
 <AddServerModal bind:open />
 
 <style>
-	button {
-		all: none;
-	}
-
 	.squareish {
-		border: none;
 		cursor: pointer;
 		width: 2rem;
 		height: 2rem;

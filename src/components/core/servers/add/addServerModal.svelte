@@ -1,9 +1,12 @@
 <script lang="ts">
+	import apiRequest from "$lib/apiRequest";
 	import { debounce } from "$lib/debounce";
-	import Modal from "../../modal.svelte";
+	import Modal from "../../../modal.svelte";
 	import { serverList } from "../getServers.svelte";
+	import Serverlist from "../../sidebar.svelte";
 
 	let { open = $bindable(false) } = $props();
+	let serverFound = $state(false);
 
 	let server = $state({
 		iconUrl: "",
@@ -17,9 +20,18 @@
 		password: "",
 	});
 
+	const closeForm = () => {
+		formData.username = "";
+		formData.password = "";
+		formData.serverURL = "";
+		open = false;
+	};
+
+	const serverId = serverList.servers.length;
+
 	const fetchServerData = async (url: string) => {
 		try {
-			const serverData = await fetch(`${url}`, {
+			const serverData = await fetch(`${url}/status`, {
 				method: "GET",
 				headers: {
 					Accept: "*/*",
@@ -27,13 +39,17 @@
 			});
 
 			const data = await serverData.json();
-			console.log(data);
+			if (serverData.status !== 200) {
+				serverFound = false;
+				return;
+			} else serverFound = true;
 
 			server.iconUrl = data.iconUrl;
 			server.name = data.name;
 			server.description = data.description;
 		} catch (e) {
 			console.error("Server not found at URL:", url);
+			serverFound = false;
 		}
 	};
 
@@ -44,69 +60,86 @@
 	});
 
 	const handleLogin = async () => {
-		const loginData = await fetch(`${formData.serverURL}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: formData.username,
-				password: formData.password,
-			}),
+		if (!serverFound) return;
+
+		const data = await apiRequest("POST", `${formData.serverURL}/login`, {
+			username: formData.username,
+			password: formData.password,
 		});
 
-		// serverList.servers.push({
-		// 	serverUrl: formData.serverURL,
-		// 	username: formData.username,
-		// 	token: loginData.token,
-		// });
-		console.log(loginData);
-	};
-	const handleRegister = async () => {
-		const registerData = await fetch(`${formData.serverURL}/register`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: formData.username,
-				password: formData.password,
-			}),
+		if (!data) return; // TODO add error handler
+
+		serverList.servers.push({
+			id: serverId,
+			name: server.name,
+			iconUrl: server.iconUrl ?? "",
+			serverUrl: formData.serverURL,
+			username: formData.username,
+			token: data.token,
 		});
-		console.log(registerData);
+
+		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		closeForm();
+	};
+
+	const handleRegister = async () => {
+		if (!serverFound) return;
+		const data = await apiRequest("POST", `${formData.serverURL}/register`, {
+			username: formData.username,
+			password: formData.password,
+		});
+
+		if (!data) return; // TODO add error handler
+		if (serverList.servers.find((server) => server.serverUrl === formData.serverURL)) return;
+
+		serverList.servers.push({
+			id: serverId,
+			name: server.name,
+			iconUrl: server.iconUrl ?? "",
+			serverUrl: formData.serverURL,
+			username: formData.username,
+			token: data.token,
+		});
+
+		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		closeForm();
 	};
 </script>
 
 <Modal bind:open>
 	<h1>Add Server</h1>
-	<div>
-		{#if server.iconUrl}
-			<div class="center">
-				<img src={server.iconUrl} alt="Server Icon" class="image" />
+	<div class="modal">
+		<div class="left">
+			<div>
+				{#if server.iconUrl}
+					<div class="center">
+						<img src={server.iconUrl} alt="Server Icon" class="image" />
+					</div>
+				{/if}
+				{#if server.name}
+					<h2>{server.name}</h2>
+				{/if}
+				{#if server.description}
+					<p>{server.description}</p>
+				{/if}
 			</div>
-		{/if}
-		{#if server.name}
-			<h2>{server.name}</h2>
-		{/if}
-		{#if server.description}
-			<p>{server.description}</p>
-		{/if}
-	</div>
-	<form>
-		<label>Server URL:</label>
-		<input type="text" bind:value={formData.serverURL} placeholder="https://ca.example.com" />
-
-		<label>Username:</label>
-		<input type="text" bind:value={formData.username} placeholder="ACoolName!" />
-
-		<label>Password:</label>
-		<input type="password" bind:value={formData.password} placeholder="****" />
-
-		<div class="buttonRow">
-			<button onclick={handleLogin}>Login</button>
-			<button onclick={handleRegister}>Register</button>
 		</div>
-	</form>
+		<form>
+			<label>Server URL:</label>
+			<input type="text" bind:value={formData.serverURL} placeholder="https://ca.example.com" />
+
+			<label>Username:</label>
+			<input type="text" bind:value={formData.username} placeholder="ACoolName!" />
+
+			<label>Password:</label>
+			<input type="password" bind:value={formData.password} placeholder="****" />
+
+			<div class="buttonRow">
+				<button onclick={handleLogin}>Login</button>
+				<button onclick={handleRegister}>Register</button>
+			</div>
+		</form>
+	</div>
 </Modal>
 
 <style>
@@ -114,7 +147,6 @@
 		margin: 0;
 		font-weight: 600;
 		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
 	}
 
 	h2 {
@@ -162,5 +194,14 @@
 		border-radius: 0.5rem;
 		overflow: hidden;
 		object-fit: cover;
+	}
+
+	.left {
+		margin-right: 1rem;
+	}
+
+	.modal {
+		display: flex;
+		flex-direction: row;
 	}
 </style>

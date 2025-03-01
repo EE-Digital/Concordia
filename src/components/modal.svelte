@@ -7,12 +7,18 @@
 			open = false;
 		}
 	};
+
+	const handleBackgroundClick = (e: MouseEvent) => {
+		if (e.target === e.currentTarget) {
+			open = false;
+		}
+	};
 </script>
 
 <svelte:document onkeydown={escKeyHandler} />
 
 {#if open}
-	<div class="background">
+	<div onclick={handleBackgroundClick} class="background">
 		<div class="content">
 			{@render children()}
 		</div>

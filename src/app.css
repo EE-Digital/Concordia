@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+	--background-color: #0f0f0f;
+	--accent-color: #8f25ab;
+	--on-accent-color: #fff;
+
+	background-color: var(--background-color);
+	font-family: "Funnel Sans", sans-serif;
+	color: white;
+	overflow: hidden;
+	height: 100vh;
+	width: 100vw;
+	/* zoom: 2; */
+}
