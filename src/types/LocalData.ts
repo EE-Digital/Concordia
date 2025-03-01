@@ -3,7 +3,7 @@ export type LocalData = {
 };
 
 export type Server = {
-	id: string;
+	id: number;
 	name: string;
 	description?: string;
 	serverUrl: string;

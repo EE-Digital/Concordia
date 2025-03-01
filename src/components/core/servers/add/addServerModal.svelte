@@ -9,7 +9,6 @@
 	let serverFound = $state(false);
 
 	let server = $state({
-		id: "",
 		iconUrl: "",
 		name: "",
 		description: "",
@@ -28,6 +27,8 @@
 		open = false;
 	};
 
+	const serverId = serverList.servers.length;
+
 	const fetchServerData = async (url: string) => {
 		try {
 			const serverData = await fetch(`${url}/status`, {
@@ -43,7 +44,6 @@
 				return;
 			} else serverFound = true;
 
-			// server.id = data.id;
 			server.iconUrl = data.iconUrl;
 			server.name = data.name;
 			server.description = data.description;
@@ -70,7 +70,7 @@
 		if (!data) return; // TODO add error handler
 
 		serverList.servers.push({
-			// id: server.id,
+			id: server.id,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,
@@ -93,7 +93,7 @@
 		if (serverList.servers.find((server) => server.serverUrl === formData.serverURL)) return;
 
 		serverList.servers.push({
-			id: server.id,
+			id: serverId,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,
