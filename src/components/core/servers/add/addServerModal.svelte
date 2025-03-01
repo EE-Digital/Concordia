@@ -70,7 +70,7 @@
 		if (!data) return; // TODO add error handler
 
 		serverList.servers.push({
-			id: server.id,
+			id: serverId,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,
