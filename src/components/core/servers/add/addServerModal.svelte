@@ -43,7 +43,7 @@
 				return;
 			} else serverFound = true;
 
-			server.id = data.id;
+			// server.id = data.id;
 			server.iconUrl = data.iconUrl;
 			server.name = data.name;
 			server.description = data.description;
@@ -70,7 +70,7 @@
 		if (!data) return; // TODO add error handler
 
 		serverList.servers.push({
-			id: server.id,
+			// id: server.id,
 			name: server.name,
 			iconUrl: server.iconUrl ?? "",
 			serverUrl: formData.serverURL,
