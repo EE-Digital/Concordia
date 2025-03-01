@@ -3,8 +3,9 @@
 	let serverId = $state("");
 	onMount(() => {
 		serverId = window.location.href.toString().split("/").pop() ?? "";
+		const server = JSON.parse(localStorage.getItem("servers") ?? "").find((server: { id: string }) => server.id === serverId);
 
-		console.log(serverId);
+		console.log(server);
 	});
 </script>
 
