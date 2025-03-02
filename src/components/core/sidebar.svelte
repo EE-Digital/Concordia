@@ -5,7 +5,7 @@
 	import ServerWidget from "./servers/ServerWidget.svelte";
 </script>
 
-<div class="mt-2 ml-2">
+<div class="pt-2 pl-2 pr-2 border-r-2 border-zinc-900 bg-zinc-900">
 	{#each serverList.servers as server}
 		<ServerWidget {server} />
 	{/each}

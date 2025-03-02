@@ -76,6 +76,7 @@
 			serverUrl: formData.serverURL,
 			username: formData.username,
 			token: data.token,
+			channels: data?.channels ?? [],
 		});
 
 		localStorage.setItem("servers", JSON.stringify(serverList.servers));
@@ -99,6 +100,7 @@
 			serverUrl: formData.serverURL,
 			username: formData.username,
 			token: data.token,
+			channels: data?.channels ?? [],
 		});
 
 		localStorage.setItem("servers", JSON.stringify(serverList.servers));

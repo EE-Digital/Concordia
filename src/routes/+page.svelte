@@ -2,7 +2,9 @@
 	import { onMount } from "svelte";
 
 	onMount(() => {
-		window.location.href = "/servers/1";
+		const serverId = JSON.parse(localStorage.getItem("servers") ?? "")[1]?.id ?? -1;
+
+		window.location.href = `/servers/${serverId}`;
 	});
 </script>
 
