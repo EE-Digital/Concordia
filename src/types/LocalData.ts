@@ -10,4 +10,11 @@ export type Server = {
 	iconUrl?: string;
 	username: string;
 	token: string;
+	channels: Channel[];
+};
+
+export type Channel = {
+	id: string;
+	title: string;
+	description?: string;
 };

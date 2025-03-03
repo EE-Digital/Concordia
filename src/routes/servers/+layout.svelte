@@ -4,9 +4,7 @@
 	import Sidebar from "../../components/core/sidebar.svelte";
 </script>
 
-<main>
-	<div class="flex flex-row">
-		<Sidebar />
-		{@render children()}
-	</div>
-</main>
+<div class=" h-screen flex flex-row">
+	<Sidebar />
+	{@render children()}
+</div>
