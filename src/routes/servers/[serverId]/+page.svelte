@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import type { Server } from "../../../types/LocalData";
-	import Settings from "~icons/lucide/bolt";
+	import Settings from "~icons/lucide/chevron-down";
 	import { loadServer } from "./serverCache";
+	import type { Message } from "../../../types/Message";
 	let server: Server | undefined = $state(undefined);
+	let selectedChannel: string | undefined = $state(undefined);
+	let messages: Awaited<Message[]> = $state([]);
 
 	onMount(async () => {
 		let servers: Server[] = JSON.parse(localStorage.getItem("servers") ?? "{}");
@@ -19,10 +22,33 @@
 		}
 
 		server = selectedServer;
+		selectedChannel = selectedServer?.channels[0].id;
+
+		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
 	});
 
 	function handleServerEdit() {
 		// window.location.href = `/servers/${(server as Server).id}/edit`;
+	}
+
+	async function getMessages(server: Server, channelId: string) {
+		try {
+			const response = await fetch(`${server!.serverUrl}/channels/${channelId}/messages`, {
+				headers: {
+					Authorization: server!.token,
+				},
+			});
+			const newMessages: Message[] = await response.json();
+			return newMessages;
+		} catch (e) {
+			console.error(e);
+		}
+		return [];
+	}
+
+	async function selectChannel(channelId: string) {
+		messages = await getMessages(server!, channelId);
+		selectedChannel = channelId;
 	}
 </script>
 
@@ -35,10 +61,13 @@
 
 {#if server !== undefined}
 	<div class="flex h-full w-full">
-		<div id="sidebar">
-			<button onclick={handleServerEdit} class="font-semibold h-12 w-44 cursor-pointer flex justify-around items-center">{(server as Server).name} <Settings /></button>
+		<div id="sidebar" class="min-w-40 w-40">
+			<button onclick={handleServerEdit} class="font-semibold h-12 w-full cursor-pointer flex justify-center items-center mx-1">
+				{(server as Server).name}
+				<Settings class="ml-1.5" />
+			</button>
 			{#each server.channels as channel}
-				<button class="w-full rounded py-1 my-1">{channel.title}</button>
+				<button onclick={() => selectChannel(channel.id)} style={channel.id === selectedChannel ? "background-color: #FFFFFF33;" : ""} class="cursor-pointer w-full rounded py-1 my-1 mx-1">{channel.title}</button>
 			{/each}
 		</div>
 		<div class="h-full w-full">
@@ -48,6 +77,21 @@
 					<h2 class="text-center">Please contact the server administrator if you believe this to be wrong</h2>
 				</div>
 			{/if}
+			{#each messages as message}
+				<div class="m-2 p-2 rounded" style="background-color: #ffffff12;">
+					<div class="flex items-center">
+						{#if message.author.profileUrl}
+							<img src={message.author.profileUrl} alt="" />
+						{:else}
+							<div class="w-8 h-8 rounded flex items-center justify-center font-bold bg-purple-700">
+								{message.author.name.slice(0, 2)}
+							</div>
+						{/if}
+						<h1 class="ml-2">{message.author.name}</h1>
+					</div>
+					<p>{message.text}</p>
+				</div>
+			{/each}
 		</div>
 	</div>
 {/if}
