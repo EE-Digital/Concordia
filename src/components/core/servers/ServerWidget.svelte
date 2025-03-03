@@ -8,16 +8,14 @@
 	const { server }: Props = $props();
 </script>
 
-<div class="cursor-pointer">
-	<a href={`/servers/${server.id}`}>
-		<div>
-			<img src={server.iconUrl} alt={server.name} />
-		</div>
-	</a>
-</div>
+<button class="cursor-pointer" onclick={() => (location.href = `/servers/${server.id}`)}>
+	<div>
+		<img src={server.iconUrl} alt={server.name} />
+	</div>
+</button>
 
 <style>
-	div {
+	button {
 		width: 2rem;
 		height: 2rem;
 		margin-bottom: 0.5rem;

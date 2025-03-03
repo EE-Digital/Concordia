@@ -3,7 +3,6 @@
 	import { debounce } from "$lib/debounce";
 	import Modal from "../../../modal.svelte";
 	import { serverList } from "../getServers.svelte";
-	import Serverlist from "../../sidebar.svelte";
 
 	let { open = $bindable(false) } = $props();
 	let serverFound = $state(false);
@@ -25,6 +24,7 @@
 		formData.password = "";
 		formData.serverURL = "";
 		open = false;
+		window.location.href = `/servers/${serverId}`;
 	};
 
 	const serverId = serverList.servers.length;
