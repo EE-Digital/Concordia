@@ -1,4 +1,4 @@
-import type { Server } from "../../../types/LocalData";
+import type { Server } from "../../types/LocalData";
 
 const serverList: { servers: Server[] } = $state({ servers: [] });
 

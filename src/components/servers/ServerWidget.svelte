@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Server } from "../../../types/LocalData";
+	import type { Server } from "../../types/LocalData";
 
 	type Props = {
 		server: Server;
