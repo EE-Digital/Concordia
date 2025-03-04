@@ -7,9 +7,11 @@
 	import ChatWindow from "../../../components/chat/chatWindow.svelte";
 	import ChannelList from "../../../components/server/channelList.svelte";
 	import { goto } from "$app/navigation";
+	import { serverList } from "../../../components/servers/getServers.svelte";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
+	const servers: Server[] = serverList.servers;
 
 	const { data } = $props() as { data: { serverId: number } };
 
@@ -22,8 +24,6 @@
 	});
 
 	async function getData(serverId: number) {
-		let servers: Server[] = JSON.parse(localStorage.getItem("servers") ?? "{}");
-
 		let selectedServer;
 		if (serverId != -1) selectedServer = servers.find((server) => server.id == serverId);
 		else if (servers.length > 0) selectedServer = servers[0];
@@ -71,7 +71,7 @@
 				{(server as Server).name}
 				<Settings class="ml-1.5" />
 			</button>
-			<ChannelList channels={server.channels} {selectChannel} {selectedChannel} />
+			<ChannelList channels={server!.channels} {selectChannel} {selectedChannel} />
 		</div>
 		{#if selectedChannel}
 			<ChatWindow {messages} />

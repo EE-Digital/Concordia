@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { serverList } from "../components/servers/getServers.svelte";
+	import { goto } from "$app/navigation";
 
 	onMount(() => {
-		const serverId = JSON.parse(localStorage.getItem("servers") ?? "")[1]?.id ?? -1;
+		const serverId = serverList.servers[0].id ?? -1;
 
-		window.location.href = `/servers/${serverId}`;
+		goto(`/servers/${serverId}`);
 	});
 </script>
 
