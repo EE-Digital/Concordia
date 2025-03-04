@@ -1,23 +1,33 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import type { Server } from "../../../types/LocalData";
+	import type { Message } from "../../../types/Message";
+	import { onMount } from "svelte";
 	import Settings from "~icons/lucide/chevron-down";
 	import { loadServer } from "./serverCache";
-	import type { Message } from "../../../types/Message";
 	import ChatWindow from "../../../components/chat/chatWindow.svelte";
 	import ChannelList from "../../../components/server/channelList.svelte";
+	import { goto } from "$app/navigation";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
 
-	onMount(async () => {
+	const { data } = $props() as { data: { serverId: number } };
+
+	$effect(() => {
+		getData(data.serverId);
+	});
+
+	onMount(() => {
+		getData(data.serverId);
+	});
+
+	async function getData(serverId: number) {
 		let servers: Server[] = JSON.parse(localStorage.getItem("servers") ?? "{}");
 
-		const serverId = parseInt(window.location.href.toString().split("/").pop() ?? "");
-
 		let selectedServer;
-		if (serverId != -1) selectedServer = servers.find((server) => server.id === serverId);
-		else selectedServer = servers[0];
+		if (serverId != -1) selectedServer = servers.find((server) => server.id == serverId);
+		else if (servers.length > 0) selectedServer = servers[0];
+		else goto("/servers");
 
 		if (selectedServer) {
 			selectedServer = await loadServer(selectedServer);
@@ -27,7 +37,7 @@
 		selectedChannel = selectedServer?.channels[0].id;
 
 		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
-	});
+	}
 
 	function handleServerEdit() {
 		// window.location.href = `/servers/${(server as Server).id}/edit`;
@@ -53,13 +63,6 @@
 		selectedChannel = channelId;
 	}
 </script>
-
-{#if server == undefined}
-	<div class="w-full h-full flex flex-col justify-center items-center">
-		<h1 class="font-bold">No server found!</h1>
-		<h2>Please join a server to use the app</h2>
-	</div>
-{/if}
 
 {#if server !== undefined}
 	<div class="flex h-full w-full">

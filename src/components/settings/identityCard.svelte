@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Server } from "../../types/LocalData";
-	import { serverList } from "../core/servers/getServers.svelte";
+	import { serverList } from "../servers/getServers.svelte";
 
 	type Props = {
 		server: Server;

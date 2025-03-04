@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import { onMount } from "svelte";
+
 	import type { Server } from "../../types/LocalData";
 
 	type Props = {
@@ -6,9 +9,12 @@
 	};
 
 	const { server }: Props = $props();
+	const changeServer = () => {
+		goto("/servers/" + server.id);
+	};
 </script>
 
-<button class="cursor-pointer" onclick={() => (location.href = `/servers/${server.id}`)}>
+<button class="cursor-pointer" onclick={changeServer}>
 	<div>
 		<img src={server.iconUrl} alt={server.name} />
 	</div>

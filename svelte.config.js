@@ -11,6 +11,8 @@ const config = {
     adapter: adapter({
       fallback: "index.html",
     }),
+    router: true,
+    hydrate: true
   },
 
   compilerOptions: {
