@@ -4,8 +4,8 @@
 	import { goto } from "$app/navigation";
 
 	onMount(() => {
-		const serverId = serverList.servers[0].id ?? -1;
-
+		if (serverList.servers.length === 0) return goto("/servers");
+		const serverId = serverList.servers[0].id;
 		goto(`/servers/${serverId}`);
 	});
 </script>

@@ -1,42 +1,46 @@
 <script lang="ts">
 	import type { Server } from "../../../types/LocalData";
 	import type { Message } from "../../../types/Message";
-	import { onMount } from "svelte";
 	import Settings from "~icons/lucide/chevron-down";
-	import { loadServer } from "./serverCache";
+	import { getChannels, getChannelsCached } from "./serverCache";
 	import ChatWindow from "../../../components/chat/chatWindow.svelte";
 	import ChannelList from "../../../components/server/channelList.svelte";
 	import { goto } from "$app/navigation";
 	import { serverList } from "../../../components/servers/getServers.svelte";
+	import { page } from "$app/state";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
+	let lastParam: number = -1;
 	const servers: Server[] = serverList.servers;
 
-	const { data } = $props() as { data: { serverId: number } };
-
 	$effect(() => {
-		getData(data.serverId);
-	});
-
-	onMount(() => {
-		getData(data.serverId);
+		getData(parseInt(page.params.serverId));
 	});
 
 	async function getData(serverId: number) {
-		let selectedServer;
-		if (serverId != -1) selectedServer = servers.find((server) => server.id == serverId);
-		else if (servers.length > 0) selectedServer = servers[0];
-		else goto("/servers");
+		// Prevents infinite loop
+		if (lastParam === serverId) return;
+		lastParam = serverId;
 
-		if (selectedServer) {
-			selectedServer = await loadServer(selectedServer);
-		}
+		// Make sure we have servers
+		if (servers.length === 0) return goto("/servers");
 
+		// Get the selected server
+		const selectedServer = servers.find((server) => server.id == serverId) ?? servers[0];
+		if (!selectedServer) return goto("/servers");
+
+		console.log(selectedServer);
+		// Get the channels
+		selectedServer.channels = (await getChannels(selectedServer)) ?? [];
+
+		// Update the state
 		server = selectedServer;
-		selectedChannel = selectedServer?.channels[0].id;
+		selectedChannel = selectedServer?.channels[0]?.id;
 
+		// If we got a  channel, get the messages
 		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
+		return 0;
 	}
 
 	function handleServerEdit() {
