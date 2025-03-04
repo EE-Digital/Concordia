@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { serverList } from "../../../components/core/servers/getServers.svelte";
+	import { serverList } from "../../../components/servers/getServers.svelte";
 	import IdentityCard from "../../../components/settings/identityCard.svelte";
 
 	onMount(() => {

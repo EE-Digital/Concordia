@@ -4,8 +4,8 @@
 	import Settings from "~icons/lucide/chevron-down";
 	import { loadServer } from "./serverCache";
 	import type { Message } from "../../../types/Message";
-	import MessageList from "../../../components/chat/messageList.svelte";
 	import ChatWindow from "../../../components/chat/chatWindow.svelte";
+	import ChannelList from "../../../components/server/channelList.svelte";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
@@ -68,9 +68,7 @@
 				{(server as Server).name}
 				<Settings class="ml-1.5" />
 			</button>
-			{#each server.channels as channel}
-				<button onclick={() => selectChannel(channel.id)} style={channel.id === selectedChannel ? "background-color: #FFFFFF33;" : ""} class="cursor-pointer w-full rounded py-1 my-1 mx-1">{channel.title}</button>
-			{/each}
+			<ChannelList channels={server.channels} {selectChannel} {selectedChannel} />
 		</div>
 		{#if selectedChannel}
 			<ChatWindow {messages} />
