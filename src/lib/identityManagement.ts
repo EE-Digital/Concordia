@@ -3,10 +3,10 @@ import { invoke } from "@tauri-apps/api/core";
 
 type UserDefaults = {
 	username: string;
-	displayName: string;
+	description: string;
 };
 
-type RsaIdentity = {
+export type RsaIdentity = {
 	id: string;
 	user: UserDefaults;
 	publicKey: string;

@@ -2,8 +2,11 @@
 	import { onMount } from "svelte";
 	import { serverList } from "../components/servers/getServers.svelte";
 	import { goto } from "$app/navigation";
+	import { listIdentities } from "$lib/identityManagement";
+	import Loading from "../components/core/loading.svelte";
 
 	onMount(() => {
+		if (listIdentities().length === 0) return goto("/setup");
 		if (serverList.servers.length === 0) return goto("/servers");
 		const serverId = serverList.servers[0].id;
 		goto(`/servers/${serverId}`);
@@ -14,19 +17,12 @@
 	<div class="image">
 		<h1>Logo</h1>
 	</div>
-	<div class="loading">
-		<div></div>
-		<div></div>
-		<div></div>
-		<div></div>
+	<div class="mt-2">
+		<Loading />
 	</div>
 </div>
 
 <style>
-	:root {
-		--color: #7348e7;
-	}
-
 	.center {
 		display: flex;
 		flex-direction: column;
@@ -49,64 +45,5 @@
 		color: #0f0f0f;
 		font-size: 1.5rem;
 		font-weight: 600;
-	}
-	.loading,
-	.loading div {
-		box-sizing: border-box;
-	}
-	.loading {
-		margin-top: 1rem;
-		display: inline-block;
-		position: relative;
-		width: 80px;
-		height: 2rem;
-	}
-	.loading div {
-		position: absolute;
-		width: 13.33333px;
-		height: 13.33333px;
-		border-radius: 50%;
-		background: var(--color);
-		animation-timing-function: cubic-bezier(0, 1, 1, 0);
-	}
-	.loading div:nth-child(1) {
-		left: 8px;
-		animation: lds-ellipsis1 0.6s infinite;
-	}
-	.loading div:nth-child(2) {
-		left: 8px;
-		animation: lds-ellipsis2 0.6s infinite;
-	}
-	.loading div:nth-child(3) {
-		left: 32px;
-		animation: lds-ellipsis2 0.6s infinite;
-	}
-	.loading div:nth-child(4) {
-		left: 56px;
-		animation: lds-ellipsis3 0.6s infinite;
-	}
-	@keyframes lds-ellipsis1 {
-		0% {
-			transform: scale(0);
-		}
-		100% {
-			transform: scale(1);
-		}
-	}
-	@keyframes lds-ellipsis3 {
-		0% {
-			transform: scale(1);
-		}
-		100% {
-			transform: scale(0);
-		}
-	}
-	@keyframes lds-ellipsis2 {
-		0% {
-			transform: translate(0, 0);
-		}
-		100% {
-			transform: translate(24px, 0);
-		}
 	}
 </style>
