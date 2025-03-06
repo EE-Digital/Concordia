@@ -78,8 +78,8 @@
 			token: data.token,
 			channels: data?.channels ?? [],
 		});
+		serverList.servers = serverList.servers; // Trigger reactivity
 
-		localStorage.setItem("servers", JSON.stringify(serverList.servers));
 		closeForm();
 	};
 

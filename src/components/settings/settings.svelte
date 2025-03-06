@@ -2,7 +2,7 @@
 	import Settings from "~icons/lucide/settings";
 </script>
 
-<a href="/settings/identities" class="squareish">
+<a href="/settings/servers" class="squareish">
 	<Settings color="white" />
 </a>
 

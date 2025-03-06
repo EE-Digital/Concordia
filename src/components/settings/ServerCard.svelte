@@ -18,13 +18,13 @@
 	};
 </script>
 
-<div class="flex flex-col justify-center items-center rounded-lg p-1.5 px-3 min-w-32 m-2">
+<div class="flex flex-col justify-center items-center rounded-lg p-1.5 px-3 min-w-32">
 	<img src={server.iconUrl} alt="Server Icon" class="rounded-lg w-20 h-20 object-cover mb-2" />
 	<h1 class="font-bold">{server.name}</h1>
 	<h2>{server.username}</h2>
 
 	<div class="flex w-full mt-2">
-		<button onclick={handleDelete} class="w-full rounded-lg px-2 cursor-pointer mx-1">Delete</button>
+		<button onclick={handleDelete} class="w-full rounded-lg px-2 cursor-pointer mx-1">Remove</button>
 	</div>
 </div>
 

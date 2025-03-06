@@ -18,17 +18,11 @@
 	<div class="flex">
 		<SideBar />
 
-		{@render children()}
+		<div class="px-4 py-2 w-full">
+			{@render children()}
+		</div>
 	</div>
 </main>
 
 <style>
-	:root {
-		color: white;
-	}
-
-	.flex {
-		display: flex;
-		flex-direction: row;
-	}
 </style>

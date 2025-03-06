@@ -1,15 +1,6 @@
-<script lang="ts">
-	import { onMount } from "svelte";
-	import { serverList } from "../../../components/servers/getServers.svelte";
-	import IdentityCard from "../../../components/settings/identityCard.svelte";
-
-	onMount(() => {
-		console.log(serverList.servers);
-	});
-</script>
-
-<div class="ml-2 mt-2 flex flex-wrap">
-	{#each serverList.servers as server}
-		<IdentityCard {server} />
-	{/each}
-</div>
+<h2 class="text-xl">Manage identities</h2>
+<p class="mb-4 text-sm font-light">
+	Identities are your access keys used to login into Concordia servers. <br />
+	We recommend you to backup them in a secure place. <br />
+	If you lose them you will be unable to access your accounts ever again.
+</p>

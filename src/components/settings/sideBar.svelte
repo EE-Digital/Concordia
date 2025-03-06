@@ -1,15 +1,22 @@
 <script lang="ts">
 	import { page } from "$app/state";
 
-	const settings = [{ name: "Identities", path: "/settings/identities" }];
+	const settings = [
+		{ name: "Servers", path: "/settings/servers" },
+		{ name: "Identities", path: "/settings/identities" },
+	];
 </script>
 
 <div>
 	<h1>Settings</h1>
 
-	{#each settings as setting}
-		<a href={setting.path}>{setting.name}</a>
-	{/each}
+	<div class="flex flex-col gap-1">
+		{#each settings as setting}
+			<a href={setting.path} class:active={page.url.pathname === setting.path}>
+				{setting.name}
+			</a>
+		{/each}
+	</div>
 </div>
 
 <style>
@@ -31,5 +38,9 @@
 		padding: 0.5rem 1.5rem;
 		border-radius: 0.25rem;
 		cursor: pointer;
+	}
+
+	.active {
+		background-color: #3f3f3f;
 	}
 </style>
