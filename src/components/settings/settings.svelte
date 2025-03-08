@@ -1,16 +1,20 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import { pushHistory } from "$lib/history";
 	import Settings from "~icons/lucide/settings";
+
+	const handleClick = () => {
+		pushHistory(window.location.pathname);
+
+		goto("/settings/servers");
+	};
 </script>
 
-<a href="/settings/servers" class="squareish">
+<button class="mt-2 squareish" onclick={handleClick}>
 	<Settings color="white" />
-</a>
+</button>
 
 <style>
-	a {
-		margin-top: 0.5rem;
-	}
-
 	.squareish {
 		display: flex;
 		justify-content: center;

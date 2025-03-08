@@ -2,6 +2,12 @@
 	import { listIdentities } from "$lib/identityManagement";
 	import StyledButton from "../../../components/core/styledButton.svelte";
 	import IdentityCard from "./IdentityCard.svelte";
+
+	import Add from "~icons/lucide/plus";
+
+	const createIdentity = () => {
+		// TODO implement create identity
+	};
 </script>
 
 <h2 class="text-xl">Manage identities</h2>
@@ -18,10 +24,14 @@
 	>
 </div>
 
-<div class="flex flex-col">
+<div class="flex flex-col gap-2">
 	{#each listIdentities() as identity}
 		<IdentityCard {identity} />
 	{:else}
 		<p class="text-center">No identities found</p>
 	{/each}
+	<button onclick={createIdentity} class="flex justify-center items-center cursor-pointer bg-zinc-900 p-2 rounded">
+		<Add />
+		<p>Add an identity</p>
+	</button>
 </div>
