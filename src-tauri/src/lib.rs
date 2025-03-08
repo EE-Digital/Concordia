@@ -2,6 +2,7 @@ use base64::prelude::*;
 use dirs::data_local_dir;
 use rsa::{
     pkcs1::{DecodeRsaPrivateKey, EncodeRsaPrivateKey, EncodeRsaPublicKey, LineEnding},
+    sha2::{Digest, Sha256},
     Pkcs1v15Sign, RsaPrivateKey, RsaPublicKey,
 };
 use tauri::Manager;
@@ -84,9 +85,14 @@ async fn sign_with_rsa(_window: tauri::Window, key_id: String, payload: String) 
     .expect("failed to read private key");
     let private_key =
         RsaPrivateKey::from_pkcs1_pem(&private_key_string).expect("failed to parse private key");
-    let padding = Pkcs1v15Sign::new_unprefixed();
+    let padding = Pkcs1v15Sign::new::<Sha256>();
+    // Hash the payload
+    let mut hasher = Sha256::new();
+    hasher.update(payload);
+    let hash = hasher.finalize();
+    // Sign the hash
     let signed = private_key
-        .sign(padding.clone(), payload.clone().as_bytes())
+        .sign(padding.clone(), &hash)
         .expect("failed to sign payload");
 
     return BASE64_STANDARD.encode(&signed);

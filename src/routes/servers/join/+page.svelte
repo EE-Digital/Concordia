@@ -1,5 +1,14 @@
 <script lang="ts">
+	import { getIdentity } from "$lib/identityManagement";
+	import loginRSA from "$lib/loginRSA";
 	import { joinData } from "./joinController.svelte";
+
+	const join = async () => {
+		const identity = getIdentity("nnxzwkso3s1mmhgkzswsojyd");
+		if (!identity) return;
+		const result = await loginRSA(identity, joinData.url!);
+		console.log(result);
+	};
 </script>
 
 <div class="background">
@@ -12,7 +21,7 @@
 				<p class="info__desciption">{joinData.serverStatus?.description ?? ""}</p>
 			</div>
 		</div>
-		<button class="join-btn" id="js-join-btn">
+		<button class="join-btn" id="js-join-btn" onclick={join}>
 			Join
 			{joinData.serverStatus?.name ?? ""}
 		</button>

@@ -1,16 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { invoke } from "@tauri-apps/api/core";
-
-type UserDefaults = {
-	username: string;
-	description: string;
-};
-
-export type RsaIdentity = {
-	id: string;
-	user: UserDefaults;
-	publicKey: string;
-};
+import type { RsaIdentity, UserDefaults } from "../types/RsaIdentity";
 
 // RSA key fuctions
 const generateRsaKeyPair = async (keyId: string) => {
@@ -18,7 +8,7 @@ const generateRsaKeyPair = async (keyId: string) => {
 	return result;
 };
 
-const signWithRsaKey = async (payload: string, keyId: string) => {
+export const signWithRsaKey = async (payload: string, keyId: string) => {
 	const result = await invoke<string>("sign_with_rsa", {
 		payload,
 		keyId,
