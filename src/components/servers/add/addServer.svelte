@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Plus from "~icons/lucide/plus";
-	import AddServerModal from "./add/addServerModal.svelte";
+	import AddServerModal from "./addServerModal.svelte";
 	let open = $state(false);
 
 	function addServer() {

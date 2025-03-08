@@ -1,7 +1,7 @@
 <script lang="ts">
 	import apiRequest from "$lib/apiRequest";
 	import { debounce } from "$lib/debounce";
-	import Modal from "../../../modal.svelte";
+	import Modal from "../../core/modal.svelte";
 	import { serverList } from "../getServers.svelte";
 
 	let { open = $bindable(false) } = $props();
@@ -79,7 +79,8 @@
 			channels: data?.channels ?? [],
 		});
 
-		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		serverList.servers = serverList.servers; // Trigger reactivity
+
 		closeForm();
 	};
 
@@ -103,7 +104,8 @@
 			channels: data?.channels ?? [],
 		});
 
-		localStorage.setItem("servers", JSON.stringify(serverList.servers));
+		serverList.servers = serverList.servers; // Trigger reactivity
+
 		closeForm();
 	};
 </script>

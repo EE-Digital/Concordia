@@ -1,31 +1,47 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import type { Server } from "../../../types/LocalData";
-	import Settings from "~icons/lucide/chevron-down";
-	import { loadServer } from "./serverCache";
 	import type { Message } from "../../../types/Message";
+	import Settings from "~icons/lucide/chevron-down";
+	import { getChannels, getChannelsCached } from "./serverCache";
+	import ChatWindow from "../../../components/chat/chatWindow.svelte";
+	import ChannelList from "../../../components/server/channelList.svelte";
+	import { goto } from "$app/navigation";
+	import { serverList } from "../../../components/servers/getServers.svelte";
+	import { page } from "$app/state";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
+	let lastParam: number = -1;
+	const servers: Server[] = serverList.servers;
 
-	onMount(async () => {
-		let servers: Server[] = JSON.parse(localStorage.getItem("servers") ?? "{}");
-
-		const serverId = parseInt(window.location.href.toString().split("/").pop() ?? "");
-
-		let selectedServer;
-		if (serverId != -1) selectedServer = servers.find((server) => server.id === serverId);
-		else selectedServer = servers[0];
-
-		if (selectedServer) {
-			selectedServer = await loadServer(selectedServer);
-		}
-
-		server = selectedServer;
-		selectedChannel = selectedServer?.channels[0].id;
-
-		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
+	$effect(() => {
+		getData(parseInt(page.params.serverId));
 	});
+
+	async function getData(serverId: number) {
+		// Prevents infinite loop
+		if (lastParam === serverId) return;
+		lastParam = serverId;
+
+		// Make sure we have servers
+		if (servers.length === 0) return goto("/servers");
+
+		// Get the selected server
+		const selectedServer = servers.find((server) => server.id == serverId) ?? servers[0];
+		if (!selectedServer) return goto("/servers");
+
+		console.log(selectedServer);
+		// Get the channels
+		selectedServer.channels = (await getChannels(selectedServer)) ?? [];
+
+		// Update the state
+		server = selectedServer;
+		selectedChannel = selectedServer?.channels[0]?.id;
+
+		// If we got a  channel, get the messages
+		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
+		return 0;
+	}
 
 	function handleServerEdit() {
 		// window.location.href = `/servers/${(server as Server).id}/edit`;
@@ -52,13 +68,6 @@
 	}
 </script>
 
-{#if server == undefined}
-	<div class="w-full h-full flex flex-col justify-center items-center">
-		<h1 class="font-bold">No server found!</h1>
-		<h2>Please join a server to use the app</h2>
-	</div>
-{/if}
-
 {#if server !== undefined}
 	<div class="flex h-full w-full">
 		<div id="sidebar" class="min-w-40 w-40">
@@ -66,33 +75,16 @@
 				{(server as Server).name}
 				<Settings class="ml-1.5" />
 			</button>
-			{#each server.channels as channel}
-				<button onclick={() => selectChannel(channel.id)} style={channel.id === selectedChannel ? "background-color: #FFFFFF33;" : ""} class="cursor-pointer w-full rounded py-1 my-1 mx-1">{channel.title}</button>
-			{/each}
+			<ChannelList channels={server!.channels} {selectChannel} {selectedChannel} />
 		</div>
-		<div class="h-full w-full">
-			{#if server.channels.length <= 0}
-				<div class="flex flex-col justify-center content-center w-full h-full">
-					<h1 class="text-center font-bold">No channels found</h1>
-					<h2 class="text-center">Please contact the server administrator if you believe this to be wrong</h2>
-				</div>
-			{/if}
-			{#each messages as message}
-				<div class="m-2 p-2 rounded" style="background-color: #ffffff12;">
-					<div class="flex items-center">
-						{#if message.author.profileUrl}
-							<img src={message.author.profileUrl} alt="" />
-						{:else}
-							<div class="w-8 h-8 rounded flex items-center justify-center font-bold bg-purple-700">
-								{message.author.name.slice(0, 2)}
-							</div>
-						{/if}
-						<h1 class="ml-2">{message.author.name}</h1>
-					</div>
-					<p>{message.text}</p>
-				</div>
-			{/each}
-		</div>
+		{#if selectedChannel}
+			<ChatWindow {messages} />
+		{:else}
+			<div class="flex flex-col justify-center content-center w-full h-full">
+				<h1 class="text-center font-bold">No channels found</h1>
+				<h2 class="text-center">Please contact the server administrator if you believe this to be wrong</h2>
+			</div>
+		{/if}
 	</div>
 {/if}
 
