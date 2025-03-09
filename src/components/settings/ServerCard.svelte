@@ -16,11 +16,9 @@
 
 		localStorage.setItem("servers", JSON.stringify(newServers));
 	};
-
-	console.log(server);
 </script>
 
-<div class="bg flex flex-col justify-between items-center rounded-lg p-1.5 px-3 min-w-32">
+<div class="bg flex flex-col justify-between items-center rounded-lg p-1.5 px-3 w-38">
 	{#if server.iconUrl}
 		<img src={server.iconUrl} alt="Server Icon" class="rounded-lg w-20 h-20 object-cover mb-2" />
 	{:else}

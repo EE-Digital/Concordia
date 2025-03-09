@@ -8,6 +8,7 @@
 	import { goto } from "$app/navigation";
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import { page } from "$app/state";
+	import MessageBox from "../../../components/chat/messageBox.svelte";
 	let server: Server | undefined = $state(undefined);
 	let selectedChannel: string | undefined = $state(undefined);
 	let messages: Awaited<Message[]> = $state([]);
@@ -78,7 +79,10 @@
 			<ChannelList channels={server!.channels} {selectChannel} {selectedChannel} />
 		</div>
 		{#if selectedChannel}
-			<ChatWindow {messages} />
+			<div class="flex flex-col w-full">
+				<ChatWindow {messages} />
+				<MessageBox {server} channelId={selectedChannel} />
+			</div>
 		{:else}
 			<div class="flex flex-col justify-center content-center w-full h-full">
 				<h1 class="text-center font-bold">No channels found</h1>
