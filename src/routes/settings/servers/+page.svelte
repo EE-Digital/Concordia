@@ -2,10 +2,6 @@
 	import { onMount } from "svelte";
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import ServerCard from "../../../components/settings/ServerCard.svelte";
-
-	onMount(() => {
-		console.log(serverList.servers);
-	});
 </script>
 
 <h2 class="text-xl">Manage servers</h2>

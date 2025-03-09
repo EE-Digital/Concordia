@@ -9,9 +9,9 @@
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import { page } from "$app/state";
 	import MessageBox from "../../../components/chat/messageBox.svelte";
+	import { activeChannel, messages } from "../../../components/store.svelte";
 	let server: Server | undefined = $state(undefined);
-	let selectedChannel: string | undefined = $state(undefined);
-	let messages: Awaited<Message[]> = $state([]);
+	// let messages: Awaited<Message[]> = $state([]);
 	let lastParam: number = -1;
 	const servers: Server[] = serverList.servers;
 
@@ -31,16 +31,15 @@
 		const selectedServer = servers.find((server) => server.id == serverId) ?? servers[0];
 		if (!selectedServer) return goto("/servers");
 
-		console.log(selectedServer);
 		// Get the channels
 		selectedServer.channels = (await getChannels(selectedServer)) ?? [];
 
 		// Update the state
 		server = selectedServer;
-		selectedChannel = selectedServer?.channels[0]?.id;
+		activeChannel.channelId = selectedServer?.channels[0]?.id;
 
 		// If we got a  channel, get the messages
-		if (selectedChannel) messages = await getMessages(selectedServer!, selectedChannel);
+		if (activeChannel.channelId) messages.messages = await getMessages(selectedServer!, activeChannel.channelId);
 		return 0;
 	}
 
@@ -56,6 +55,8 @@
 				},
 			});
 			const newMessages: Message[] = await response.json();
+			console.log(newMessages);
+
 			return newMessages;
 		} catch (e) {
 			console.error(e);
@@ -64,8 +65,8 @@
 	}
 
 	async function selectChannel(channelId: string) {
-		messages = await getMessages(server!, channelId);
-		selectedChannel = channelId;
+		messages.messages = await getMessages(server!, channelId);
+		activeChannel.channelId = channelId;
 	}
 </script>
 
@@ -76,12 +77,12 @@
 				{(server as Server).name}
 				<Settings class="ml-1.5" />
 			</button>
-			<ChannelList channels={server!.channels} {selectChannel} {selectedChannel} />
+			<ChannelList channels={server!.channels} {selectChannel} selectedChannel={activeChannel.channelId} />
 		</div>
-		{#if selectedChannel}
+		{#if activeChannel.channelId}
 			<div class="flex flex-col w-full">
-				<ChatWindow {messages} />
-				<MessageBox {server} channelId={selectedChannel} />
+				<ChatWindow messages={messages.messages} />
+				<MessageBox {server} channelId={activeChannel.channelId} />
 			</div>
 		{:else}
 			<div class="flex flex-col justify-center content-center w-full h-full">
