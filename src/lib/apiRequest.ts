@@ -1,9 +1,10 @@
-export default async function apiRequest(method: "POST" | "GET", url: string, body?: any) {
+export default async function apiRequest(method: "POST" | "GET", url: string, body?: any, token?: string) {
 	try {
 		const response = await fetch(url, {
 			method: method,
 			headers: {
 				"Content-Type": "application/json",
+				"authorization": token ?? "",
 			},
 			body: body ? JSON.stringify(body) : undefined,
 		});
