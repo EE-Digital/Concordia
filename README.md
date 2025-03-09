@@ -4,6 +4,8 @@
 
 List of all things that are being worked on
 
+- [ ] Windows installer being marked as a virus (???)
+
 ### Messaging
 
 - [x] Messaging window
