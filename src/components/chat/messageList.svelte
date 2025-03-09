@@ -10,7 +10,7 @@
 {#each messages as message, index}
 	<div class="mx-2 rounded">
 		{#if index === 0 || message.author.id !== messages[index - 1]?.author.id}
-			<div class="flex items-center mt-2">
+			<div class="flex items-center mt-3 mb-1">
 				{#if message.author.profileUrl}
 					<img src={message.author.profileUrl} alt="" />
 				{:else}
@@ -18,9 +18,9 @@
 						{message.author.name.slice(0, 2)}
 					</div>
 				{/if}
-				<h1 class="ml-2">{message.author.name}</h1>
+				<h1 class="ml-2 font-semibold">{message.author.name}</h1>
 			</div>
 		{/if}
-		<p>{message.text}</p>
+		<p class="text-neutral-200">{message.text}</p>
 	</div>
 {/each}

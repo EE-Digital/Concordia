@@ -26,8 +26,6 @@
 			server.token,
 		);
 
-		console.log(data);
-
 		message = "";
 	};
 

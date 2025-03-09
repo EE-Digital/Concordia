@@ -27,7 +27,6 @@ const deleteRsaKeyPair = async (keyId: string) => {
 
 const listRsaKeyIds = async () => {
 	const result = await invoke<string[]>("list_rsa_keys");
-	console.log(result);
 };
 
 // Identity functions
