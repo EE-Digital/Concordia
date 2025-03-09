@@ -1,12 +1,20 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { getIdentity } from "$lib/identityManagement";
+	import { getIdentity, listIdentities } from "$lib/identityManagement";
 	import loginRSA from "$lib/loginRSA";
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import { joinData } from "./joinController.svelte";
 
+	const identities = listIdentities();
+
+	if (identities.length === 0) {
+		goto("/");
+	}
+
+	let selectedIdentity = $state(identities[0].id);
+
 	const join = async () => {
-		const identity = getIdentity("nnxzwkso3s1mmhgkzswsojyd");
+		const identity = getIdentity(selectedIdentity);
 		if (!identity) return;
 		const result = await loginRSA(identity, joinData.url!);
 
@@ -43,7 +51,7 @@
 			{/if}
 			<div class="info">
 				<div class="info__welcome">You are welcome to join</div>
-				<h1>{joinData.serverStatus?.name ?? ""}</h1>
+				<h1 class="text-2xl font-bold m-0">{joinData.serverStatus?.name ?? ""}</h1>
 				<p class="info__desciption">{joinData.serverStatus?.description ?? ""}</p>
 			</div>
 		</div>
@@ -51,6 +59,31 @@
 			Join
 			{joinData.serverStatus?.name ?? ""}
 		</button>
+		{#if identities.length > 1}
+			<div class="flex gap-2">
+				{#each identities as identity}
+					<button
+						onclick={() => {
+							selectedIdentity = identity.id;
+						}}
+						class="cursor-pointer rounded p-2 flex flex-col items-center w-35 bg-zinc-800"
+						class:color={identity.id === selectedIdentity}
+					>
+						<div class="mb-2">
+							{#if identity.user.profilePictureUrl}
+								<img src={identity.user.profilePictureUrl} alt={identity.user.username} />
+							{:else}
+								<div class="bg-violet-400 rounded w-20 h-20 justify-center items-center flex text-2xl font-bold">
+									{identity.user.username[0] ?? ""}{identity.user.username[1]?.toLowerCase() ?? ""}
+								</div>
+							{/if}
+						</div>
+						<h1 class="font-semibold">{identity.user.username}</h1>
+						<p class="text-center">{identity.user.description}</p>
+					</button>
+				{/each}
+			</div>
+		{/if}
 		<div class="download">
 			This server is not hosted by Concordia.
 			<br />
@@ -87,11 +120,6 @@
 		object-fit: cover;
 	}
 
-	h1 {
-		font-size: 2rem;
-		margin: 0;
-	}
-
 	.info__welcome {
 		font-size: 1rem;
 		font-weight: 300;
@@ -103,6 +131,10 @@
 		font-weight: 300;
 		opacity: 0.8;
 		margin: 0.5rem 0;
+	}
+
+	.color {
+		background-color: #654ea3;
 	}
 
 	.join-btn {

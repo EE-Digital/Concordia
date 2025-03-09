@@ -1,14 +1,24 @@
 <script>
 	import { listIdentities } from "$lib/identityManagement";
 	import StyledButton from "../../../components/core/styledButton.svelte";
+	import AddIdentityModal from "./addIdentityModal.svelte";
 	import IdentityCard from "./IdentityCard.svelte";
 
 	import Add from "~icons/lucide/plus";
 
+	let open = $state(false);
+	let identities = $state(listIdentities());
+
 	const createIdentity = () => {
-		// TODO implement create identity
+		open = true;
 	};
+
+	$effect(() => {
+		if (!open) identities = listIdentities();
+	});
 </script>
+
+<AddIdentityModal bind:open />
 
 <h2 class="text-xl">Manage identities</h2>
 <div class="flex justify-between items-center mb-6">
@@ -25,7 +35,7 @@
 </div>
 
 <div class="flex flex-col gap-2">
-	{#each listIdentities() as identity}
+	{#each identities as identity}
 		<IdentityCard {identity} />
 	{:else}
 		<p class="text-center">No identities found</p>

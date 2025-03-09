@@ -1,6 +1,7 @@
 export type UserDefaults = {
 	username: string;
 	description: string;
+	profilePictureUrl?: string;
 };
 
 export type RsaIdentity = {

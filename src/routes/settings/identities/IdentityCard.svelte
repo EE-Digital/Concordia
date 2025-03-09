@@ -1,12 +1,22 @@
 <script lang="ts">
-	import { deleteIdentity, type RsaIdentity } from "$lib/identityManagement";
+	import { deleteIdentity } from "$lib/identityManagement";
 	import StyledButton from "../../../components/core/styledButton.svelte";
+	import type { RsaIdentity } from "../../../types/RsaIdentity";
 
 	type Props = {
 		identity: RsaIdentity;
 	};
 
 	const { identity }: Props = $props();
+
+	let loading = $state(false);
+	const deleteIdentityHandler = async () => {
+		if (loading) return;
+		loading = true;
+
+		await deleteIdentity(identity.id);
+		loading = false;
+	};
 </script>
 
 <div class="flex justify-between bg-zinc-900 p-2 rounded">
@@ -19,7 +29,7 @@
 		</div>
 		<p>{identity.user.description}</p>
 	</div>
-	<StyledButton dangerous onclick={() => deleteIdentity(identity.id)}>Delete</StyledButton>
+	<StyledButton {loading} dangerous onclick={deleteIdentityHandler}>Delete</StyledButton>
 </div>
 
 <style>

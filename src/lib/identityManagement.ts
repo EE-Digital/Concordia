@@ -72,4 +72,5 @@ export async function createIdentity(defaultUserProperties: UserDefaults) {
 	const identities = listIdentities();
 	identities.push(identity);
 	saveIdentities(identities);
+	return identity;
 }
