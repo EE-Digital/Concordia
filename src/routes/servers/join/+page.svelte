@@ -33,7 +33,9 @@
 		});
 
 		// Redirect to the server
-		goto(`/servers/${serverId}`);
+		goto(`/servers/${serverId}`, {
+			replaceState: true,
+		});
 	};
 </script>
 
