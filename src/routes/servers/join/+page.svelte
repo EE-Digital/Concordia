@@ -11,6 +11,12 @@
 		goto("/");
 	}
 
+	if (!joinData.url) {
+		goto('/', {
+			replaceState: true,
+		});
+	}
+
 	let selectedIdentity = $state(identities[0].id);
 
 	const join = async () => {
