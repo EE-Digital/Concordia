@@ -12,3 +12,9 @@ export const validatePassword = (password: string) => {
 	if (!/[A-Z]+/g.test(password)) return "Password must contain at least one uppercase letter";
 	return true;
 };
+
+export const validateUrl = (url: string) => {
+	url = url.trim();
+	if (!/^(http|https):\/\/[^ "]+$/.test(url)) return "Invalid URL";
+	return true;
+}

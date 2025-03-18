@@ -55,7 +55,7 @@
 				<p class="info__desciption">{joinData.serverStatus?.description ?? ""}</p>
 			</div>
 		</div>
-		{#if identities.length === 0}
+		{#if identities.length === 1}
 			<button class="join-btn" onclick={join}>
 				Join
 				{joinData.serverStatus?.name ?? ""}

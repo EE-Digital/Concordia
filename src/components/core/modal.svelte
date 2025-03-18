@@ -18,36 +18,11 @@
 <svelte:document onkeydown={escKeyHandler} />
 
 {#if open}
-	<div onclick={handleBackgroundClick} class="background">
-		<div class="content">
+	<div onclick={handleBackgroundClick} class="fixed top-0 left-0 w-full h-full overflow-hidden flex flex-col items-center justify-center z-100 bg-opacity-3 bg-[#00000080]">
+		<div class="text-white flex flex-col justify-center items-center p-4 rounded-2xl bg-zinc-900 ">
 			{@render children()}
 		</div>
 	</div>
 {/if}
 
-<style>
-	.background {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		background: #000000aa;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.content {
-		color: white;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 1rem;
-		border-radius: 0.25rem;
-		background-color: #0f0f0f;
-	}
-</style>
+<style></style>
