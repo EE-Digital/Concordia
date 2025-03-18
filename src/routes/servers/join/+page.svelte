@@ -55,10 +55,12 @@
 				<p class="info__desciption">{joinData.serverStatus?.description ?? ""}</p>
 			</div>
 		</div>
-		<button class="join-btn" id="js-join-btn" onclick={join}>
-			Join
-			{joinData.serverStatus?.name ?? ""}
-		</button>
+		{#if identities.length === 0}
+			<button class="join-btn" onclick={join}>
+				Join
+				{joinData.serverStatus?.name ?? ""}
+			</button>
+		{/if}
 		{#if identities.length > 1}
 			<div class="flex gap-2">
 				{#each identities as identity}
@@ -83,6 +85,12 @@
 					</button>
 				{/each}
 			</div>
+			<button class="join-btn" onclick={join}>
+				Join
+				<b>{joinData.serverStatus?.name ?? ""}</b>
+				as
+				<b>{identities.find(identity => identity.id === selectedIdentity)?.user.username}</b>
+			</button>
 		{/if}
 		<div class="download">
 			This server is not hosted by Concordia.

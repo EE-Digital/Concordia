@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { generateRandomUsername } from "$lib/generators";
 	import { createIdentity } from "$lib/identityManagement";
-  import { autoFocus } from "$lib/use/autoFocus.svelte";
+	import { autoFocus } from "$lib/use/autoFocus.svelte";
 	import { validateUsername } from "$lib/validators";
 	import StyledButton from "../../components/core/styledButton.svelte";
 	import IconRight from "~icons/lucide/chevron-right";
