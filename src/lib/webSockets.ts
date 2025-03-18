@@ -10,13 +10,13 @@ export default function initWebSockets() {
 	});
 
 	servers.forEach((serverUrl) => {
-		const clearUrl = serverUrl.replace("http://", "").replace("https://", "");
+		const clearUrl = serverUrl.replace("http://", "ws://").replace("https://", "wss://");
 		createWebsocket(clearUrl);
 	});
 }
 
 function createWebsocket(server: string) {
-	const ws = new WebSocket(`ws://${server}/ws`);
+	const ws = new WebSocket(`${server}/ws`);
 
 	ws.onopen = () => {
 		ws.send("Hello, world!");
