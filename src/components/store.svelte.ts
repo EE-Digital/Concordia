@@ -37,7 +37,6 @@ const messages: { messages: Message[] } = $state({ messages: [] });
 function pushMessage(message: Message) {
 	messages.messages.push(message);
 	messages.messages = messages.messages; // force update
-	console.log(messages.messages);
 }
 
 export { messages, activeChannel, pushMessage };

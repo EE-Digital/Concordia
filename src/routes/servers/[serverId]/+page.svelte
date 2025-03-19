@@ -80,7 +80,7 @@
 			<ChannelList channels={server!.channels} {selectChannel} selectedChannel={activeChannel.channelId} />
 		</div>
 		{#if activeChannel.channelId}
-			<div class="flex flex-col w-full">
+			<div class="flex flex-col w-full pb-2">
 				<ChatWindow messages={messages.messages} />
 				<MessageBox {server} channelId={activeChannel.channelId} />
 			</div>
