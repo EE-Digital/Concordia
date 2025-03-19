@@ -10,25 +10,16 @@
 	};
 </script>
 
-<button class="mt-2 squareish" onclick={handleClick}>
+<button class="relative cursor-pointer w-8 h-8 rounded-xl hover:rounded-lg bg-[#2c2c2c] transition-all flex justify-center items-center group hover:bg-(--accent-color)" onclick={handleClick}>
 	<Settings color="white" />
+
+	<div class="absolute top-1/2 left-8 transform -translate-y-1/2 flex items-center invisible group-hover:visible">
+		<div class="w-3 h-3 bg-black transfrom rotate-45 ml-1.5 -mr-2"></div>
+		<div class="bg-black px-2 py-1 rounded-md z-10 text-left">
+			<div class="text-sm text-white text-nowrap">Settings</div>
+		</div>
+	</div>
 </button>
 
 <style>
-	.squareish {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border: none;
-		cursor: pointer;
-		width: 2rem;
-		height: 2rem;
-		border-radius: 0.25rem;
-		background-color: #2c2c2c;
-		transition: border-radius 150ms ease-in-out;
-	}
-
-	.squareish:hover {
-		border-radius: 0.5rem;
-	}
 </style>

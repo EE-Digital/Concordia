@@ -12,7 +12,7 @@
 	}
 
 	if (!joinData.url) {
-		goto('/', {
+		goto("/", {
 			replaceState: true,
 		});
 	}
@@ -97,7 +97,7 @@
 				Join
 				<b>{joinData.serverStatus?.name ?? ""}</b>
 				as
-				<b>{identities.find(identity => identity.id === selectedIdentity)?.user.username}</b>
+				<b>{identities.find((identity) => identity.id === selectedIdentity)?.user.username}</b>
 			</button>
 		{/if}
 		<div class="download">
