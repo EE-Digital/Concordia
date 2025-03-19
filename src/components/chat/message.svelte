@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { parseMarkdownToHtml } from "$lib/markdown";
 	import type { Message as MessageType } from "../../types/Message";
 
 	type Props = {
@@ -23,5 +24,5 @@
 		</div>
 	{/if}
 
-	<p class="text-neutral-200">{message.text}</p>
+	<div class="text-neutral-200">{@html parseMarkdownToHtml(message.text)}</div>
 </div>
