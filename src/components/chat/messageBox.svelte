@@ -41,7 +41,7 @@
 	};
 </script>
 
-<div class="w-full px-1 fleex pr-5 pt-2">
+<div class="w-full px-1 fleex pr-5">
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex bg-zinc-800 rounded-lg">
@@ -53,19 +53,19 @@
 
 		<!-- Tools -->
 		<div class="flex gap-2 px-0 py-2">
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("Not implemented yet")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
 				<IconImage />
 				GIF
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("Not implemented yet")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
 				<IconPool />
 				Poll
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("Not implemented yet")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
 				<IconSwords />
 				Game
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("Not implemented yet")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
 				<IconFile />
 				Attachment
 			</button>
