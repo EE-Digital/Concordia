@@ -54,6 +54,11 @@ const handleWebsocketMessage = async (event: MessageEvent) => {
 					pushMessage(data.data.message);
 				}
 				break;
+			case "newAttachment":
+				if (activeChannel.channelId === data.data.message.channelId) {
+					console.log("[WS] Got new message");
+					pushMessage(data.data.message);
+				}
 		}
 	} catch (e) {
 		console.log("[WS] Got non JSON message");

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import SendButton from "~icons/lucide/send";
-	import MessageList from "./messageList.svelte";
 	import apiRequest from "$lib/apiRequest";
 	import type { Server } from "../../types/LocalData";
 	import IconFile from "~icons/lucide/file";
@@ -39,9 +38,33 @@
 			sendMessage();
 		}
 	};
+
+	const trrigetAttachment = () => {
+		const fileInput = document.getElementById("file_input") as HTMLInputElement;
+		fileInput.click();
+	};
+
+	const handleAttachment = async (e: any) => {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		const data = new FormData();
+		data.append("f", file);
+
+		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages/attachment`, {
+			method: "POST",
+			headers: {
+				authorization: server.token,
+			},
+			body: data,
+		});
+		if (response.status != 200) console.error("Failed sending attachment");
+	};
 </script>
 
 <div class="w-full px-1 fleex pr-5">
+	<!-- Do not delete, used for getting Attachment -->
+	<input type="file" name="file_input" id="file_input" style="display:none;" onchange={handleAttachment} max="1" />
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex bg-zinc-800 rounded-lg">
@@ -65,7 +88,7 @@
 				<IconSwords />
 				Game
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={trrigetAttachment}>
 				<IconFile />
 				Attachment
 			</button>

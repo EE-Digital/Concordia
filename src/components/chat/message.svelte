@@ -24,5 +24,5 @@
 		</div>
 	{/if}
 
-	<div class="text-neutral-200">{@html parseMarkdownToHtml(message.text)}</div>
+	<div class="text-neutral-200">{@html parseMarkdownToHtml(message.text as string)}</div>
 </div>
