@@ -50,6 +50,7 @@
 
 	const handleAttachment = async (e: any) => {
 		const file = e.target.files[0];
+		console.log(file);
 		if (!file) return;
 
 		const data = new FormData();
@@ -107,15 +108,17 @@
 	</div>
 
 	<!-- Emoji Keyboard -->
-	<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100" class:hidden={!isEmojiKeyboardVisible}>
-		<EmojiKeyboard
-			onselect={(emoji, close) => {
-				message += `${emoji} `;
+	{#if isEmojiKeyboardVisible}
+		<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100">
+			<EmojiKeyboard
+				onselect={(emoji, close) => {
+					message += `${emoji} `;
 
-				if (close) isEmojiKeyboardVisible = false;
-			}}
-		/>
-	</div>
+					if (close) isEmojiKeyboardVisible = false;
+				}}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>

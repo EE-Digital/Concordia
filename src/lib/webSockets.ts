@@ -1,6 +1,7 @@
 import { serverList } from "../components/servers/getServers.svelte";
-import type { Message } from "../types/Message";
+import type { Message as T_Message } from "../types/Message";
 import { activeChannel, messages, pushMessage } from "../components/store.svelte";
+import WebSocket, { type Message } from "@tauri-apps/plugin-websocket";
 
 export default function initWebSockets() {
 	const servers: string[] = [];
@@ -15,20 +16,16 @@ export default function initWebSockets() {
 	});
 }
 
-function createWebsocket(server: string) {
-	const ws = new WebSocket(`${server}/ws`);
+async function createWebsocket(server: string) {
+	const ws = await WebSocket.connect(`${server}/ws`);
 
-	ws.onopen = () => {
-		ws.send("Hello, world!");
-	};
-
-	ws.onmessage = (event) => {
+	ws.addListener((event: Message) => {
 		handleWebsocketMessage(event);
-	};
+	});
 
-	ws.onclose = () => {};
-
-	ws.onerror = (e) => {};
+	window.addEventListener("beforeunload", () => {
+		ws.disconnect();
+	});
 
 	return ws;
 }
@@ -40,13 +37,13 @@ type WebsocketMessage = {
 
 type newMessage = {
 	serverUrl: string;
-	message: Message;
+	message: T_Message;
 };
 
-const handleWebsocketMessage = async (event: MessageEvent) => {
+const handleWebsocketMessage = async (event: Message) => {
+	if (event.type !== "Text") return console.log("[WS] Got non Text message");
 	try {
 		const data: WebsocketMessage = JSON.parse(event.data);
-		console.log(data);
 		switch (data.type) {
 			case "newMessage":
 				if (activeChannel.channelId === data.data.message.channelId) {

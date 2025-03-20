@@ -1,6 +1,6 @@
 <script lang="ts">
 	import EmojiList from "./EmojiList.svelte";
-	import EmojiOrdering from "./EmojiOrdering.json";
+	import EmojiOrdering from "./emojiOrdering.json";
 
 	import IconSmile from "~icons/lucide/smile";
 	import IconPeople from "~icons/lucide/users";
@@ -29,8 +29,9 @@
 <div class="h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden">
 	<div class="flex bg-zinc-900">
 		{#each EmojiOrdering as group, i}
+			{@const GroupIcon = groupIcons[i]}
 			<button onclick={toggleGroupHandle(i)} class="py-2 w-full cursor-pointer flex justify-center border-b-2 text-lg {activeGroup === i ? 'bg-zinc-700 border-(--accent-color)' : 'text-neutral-400 border-transparent hover:bg-zinc-800 hover:text-neutral-300'}">
-				<svelte:component this={groupIcons[i]} />
+				<GroupIcon />
 			</button>
 		{/each}
 	</div>
