@@ -1,5 +1,5 @@
 import insane, { type SanitizeOptions } from "insane";
-import twemoji from "twemoji";
+import twemoji from "@discordapp/twemoji";
 
 const escapeHtml = (unsafe: string) => {
 	return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -7,9 +7,9 @@ const escapeHtml = (unsafe: string) => {
 
 const parseEmoji = (text: string) => {
 	return twemoji.parse(text, {
-		base: "https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/assets/",
+		base: "/emoji",
 		ext: ".svg",
-		size: "svg",
+		size: "/svg",
 		className: "w-5 h-5 inline",
 	});
 };
