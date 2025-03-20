@@ -1,17 +1,8 @@
 import insane, { type SanitizeOptions } from "insane";
-import twemoji from "@discordapp/twemoji";
+import { parseEmoji } from "./emoji";
 
 const escapeHtml = (unsafe: string) => {
 	return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-};
-
-const parseEmoji = (text: string) => {
-	return twemoji.parse(text, {
-		base: "/emoji",
-		ext: ".svg",
-		size: "/svg",
-		className: "w-5 h-5 inline",
-	});
 };
 
 const parseMakrdown = (markdown: string) => {
