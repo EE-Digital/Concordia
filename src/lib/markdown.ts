@@ -1,7 +1,17 @@
-import insane from "insane";
+import insane, { type SanitizeOptions } from "insane";
+import twemoji from "twemoji";
 
 const escapeHtml = (unsafe: string) => {
 	return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+};
+
+const parseEmoji = (text: string) => {
+	return twemoji.parse(text, {
+		base: "https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/assets/",
+		ext: ".svg",
+		size: "svg",
+		className: "w-5 h-5 inline",
+	});
 };
 
 const parseMakrdown = (markdown: string) => {
@@ -42,18 +52,21 @@ const parseMakrdown = (markdown: string) => {
 	);
 };
 
+const insaneConfig: SanitizeOptions = {
+	allowedAttributes: {
+		a: ["href", "class", "target", "title"],
+		span: ["class"],
+		img: ["class", "dragable", "src", "alt"],
+	},
+	allowedClasses: {},
+	allowedSchemes: ["http", "https"],
+	allowedTags: ["br", "a", "span", "img"],
+};
+
 export function parseMarkdownToHtml(markdown: string): string {
 	const escaped = escapeHtml(markdown);
-	const dirty = parseMakrdown(escaped);
-	const clean = insane(dirty, {
-		allowedAttributes: {
-			a: ["href", "class", "target", "title"],
-			span: ["class"],
-		},
-		allowedClasses: {},
-		allowedSchemes: ["http", "https"],
-		// @ts-ignore
-		allowedTags: ["p", "strong", "em", "u", "s", "br", "a", "span"],
-	});
-	return clean;
+	const emojiParsed = parseEmoji(escaped);
+	const markdownParsed = parseMakrdown(emojiParsed);
+
+	return insane(markdownParsed, insaneConfig);
 }
