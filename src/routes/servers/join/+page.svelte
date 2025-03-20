@@ -11,6 +11,12 @@
 		goto("/");
 	}
 
+	if (!joinData.url) {
+		goto("/", {
+			replaceState: true,
+		});
+	}
+
 	let selectedIdentity = $state(identities[0].id);
 
 	const join = async () => {
@@ -33,7 +39,9 @@
 		});
 
 		// Redirect to the server
-		goto(`/servers/${serverId}`);
+		goto(`/servers/${serverId}`, {
+			replaceState: true,
+		});
 	};
 </script>
 
@@ -55,10 +63,12 @@
 				<p class="info__desciption">{joinData.serverStatus?.description ?? ""}</p>
 			</div>
 		</div>
-		<button class="join-btn" id="js-join-btn" onclick={join}>
-			Join
-			{joinData.serverStatus?.name ?? ""}
-		</button>
+		{#if identities.length === 1}
+			<button class="join-btn" onclick={join}>
+				Join
+				{joinData.serverStatus?.name ?? ""}
+			</button>
+		{/if}
 		{#if identities.length > 1}
 			<div class="flex gap-2">
 				{#each identities as identity}
@@ -83,6 +93,12 @@
 					</button>
 				{/each}
 			</div>
+			<button class="join-btn" onclick={join}>
+				Join
+				<b>{joinData.serverStatus?.name ?? ""}</b>
+				as
+				<b>{identities.find((identity) => identity.id === selectedIdentity)?.user.username}</b>
+			</button>
 		{/if}
 		<div class="download">
 			This server is not hosted by Concordia.

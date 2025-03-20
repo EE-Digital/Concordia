@@ -10,13 +10,13 @@ export default function initWebSockets() {
 	});
 
 	servers.forEach((serverUrl) => {
-		const clearUrl = serverUrl.replace("http://", "").replace("https://", "");
+		const clearUrl = serverUrl.replace("http://", "ws://").replace("https://", "wss://");
 		createWebsocket(clearUrl);
 	});
 }
 
 function createWebsocket(server: string) {
-	const ws = new WebSocket(`ws://${server}/ws`);
+	const ws = new WebSocket(`${server}/ws`);
 
 	ws.onopen = () => {
 		ws.send("Hello, world!");
@@ -54,6 +54,11 @@ const handleWebsocketMessage = async (event: MessageEvent) => {
 					pushMessage(data.data.message);
 				}
 				break;
+			case "newAttachment":
+				if (activeChannel.channelId === data.data.message.channelId) {
+					console.log("[WS] Got new message");
+					pushMessage(data.data.message);
+				}
 		}
 	} catch (e) {
 		console.log("[WS] Got non JSON message");

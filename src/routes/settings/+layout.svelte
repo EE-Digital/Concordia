@@ -9,11 +9,11 @@
 	const escKeyHandler = (e: KeyboardEvent) => {
 		if (e.key === "Escape") {
 			e.preventDefault();
-			goto("/");
+			exitSettings();
 		}
 	};
 
-	const handleClick = () => {
+	const exitSettings = () => {
 		goto(popHistory() ?? "/");
 	};
 </script>
@@ -22,7 +22,7 @@
 
 <main>
 	<div class="w-full bg-zinc-800 flex items-center justify-start gap-5 pt-1 px-4 pb-0.5 mb-1.5">
-		<button class="cursor-pointer" onclick={handleClick}>
+		<button class="cursor-pointer" onclick={exitSettings}>
 			<ArrowBack />
 		</button>
 		<h1>Settings</h1>

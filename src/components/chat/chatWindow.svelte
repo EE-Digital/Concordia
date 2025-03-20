@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import MessageList from "./messageList.svelte";
+	import Message from "./message.svelte";
 
 	const { messages } = $props();
 
@@ -15,11 +16,12 @@
 
 <div class="flex flex-col h-full w-full justify-end max-h-screen overflow-auto">
 	{#if messages.length === 0}
-		<div class="flex flex-col justify-center align-center h-full w-full">
-			<p class="text-center text-white">There's no messages here yet</p>
+		<div class="flex flex-col w-full h-full justify-center items-center">
+			<p class="text-center text-white text-lg">Empty channel</p>
+			<p class="text-neutral-400">Be the first one to send a message!</p>
 		</div>
 	{/if}
-	<div class="overflow-y-auto" bind:this={messageContainer}>
+	<div class="overflow-y-auto pb-2" bind:this={messageContainer}>
 		<MessageList {messages} />
 	</div>
 </div>
