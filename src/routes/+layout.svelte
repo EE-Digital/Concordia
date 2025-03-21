@@ -2,7 +2,22 @@
 	import { initDeeplinks } from "$lib/deepLink";
 	import initWebSockets from "$lib/webSockets";
 	import { initServerListStorage } from "../components/servers/getServers.svelte";
+	import initTray from "$lib/tray";
 
+	import { getCurrentWindow } from "@tauri-apps/api/window";
+
+	const unlisten = async () => {
+		const window = await getCurrentWindow();
+		window.onCloseRequested((event) => {
+			console.log("CLOSE REQ");
+
+			event.preventDefault();
+			window.hide();
+		});
+		initTray(window);
+	};
+
+	unlisten();
 	initServerListStorage();
 	initDeeplinks();
 	initWebSockets();

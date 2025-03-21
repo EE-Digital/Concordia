@@ -15,6 +15,9 @@
 					"url": ".*"
 				}
 			]
-		}
+		},
+		"process:default",
+		"core:window:allow-hide",
+		"core:window:allow-show"
 	]
 }

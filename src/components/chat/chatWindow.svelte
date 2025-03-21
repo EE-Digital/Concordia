@@ -7,6 +7,14 @@
 
 	let messageContainer: HTMLDivElement | null = null;
 
+	onMount(() => {
+		setTimeout(() => {
+			if (messageContainer && messages.length > 0) {
+				messageContainer.scrollTo(0, messageContainer.scrollHeight);
+			}
+		}, 100);
+	});
+
 	$effect(() => {
 		if (messageContainer && messages.length > 0) {
 			messageContainer.scrollTo(0, messageContainer.scrollHeight);
