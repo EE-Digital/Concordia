@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { initDeeplinks } from "$lib/deepLink";
 	import { prefetchAllEmojis } from "$lib/emoji";
+	import { registerUpdateCheckerEffect } from "$lib/updater.svelte";
 	import initWebSockets from "$lib/webSockets";
+	import { onMount } from "svelte";
 	import { initServerListStorage } from "../components/servers/getServers.svelte";
 	import initTray from "$lib/tray";
 
@@ -22,7 +24,13 @@
 	initServerListStorage();
 	initDeeplinks();
 	initWebSockets();
-	prefetchAllEmojis();
+	registerUpdateCheckerEffect();
+
+	onMount(() => {
+		setTimeout(() => {
+			prefetchAllEmojis();
+		}, 10);
+	});
 
 	const { children } = $props();
 </script>
