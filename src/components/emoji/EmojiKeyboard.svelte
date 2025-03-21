@@ -93,10 +93,15 @@
 					<EmojiList emojis={EmojiOrdering[activeGroup].emoji} {onselect} />
 				</div>
 			{/key}
-		{:else}
+		{:else if searchResults.length > 0}
 			<div class="block">
 				<div class="sticky top-0 bg-zinc-800 text-neutral-400 py-1">Search results</div>
 				<EmojiList emojis={searchResults} {onselect} />
+			</div>
+		{:else}
+			<div class="text-neutral-400 w-96 h-full flex flex-col justify-center items-center text-center">
+				<div class="text-neutral-300 font-xl font-bold">No emojis found!</div>
+				<div>Try searching for something else</div>
 			</div>
 		{/if}
 	</div>
