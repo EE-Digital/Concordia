@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { getIdentity, listIdentities } from "$lib/identityManagement";
 	import loginRSA from "$lib/loginRSA";
+	import { createWebsocket } from "$lib/webSockets";
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import { joinData } from "./joinController.svelte";
 
@@ -26,7 +27,7 @@
 
 		const serverId = serverList.servers.reduce((max, server) => (server.id > max ? server.id : max), 0) + 1;
 
-		serverList.servers.push({
+		const server = {
 			id: serverId,
 			identityId: identity.id,
 			name: joinData.serverStatus?.name ?? "",
@@ -36,7 +37,13 @@
 			username: result.user.name,
 			token: result.token,
 			channels: result.channels ?? [],
-		});
+		};
+
+		serverList.servers.push(server);
+
+		const clearUrl = server.serverUrl.replace("http://", "ws://").replace("https://", "wss://");
+
+		createWebsocket(clearUrl);
 
 		// Redirect to the server
 		goto(`/servers/${serverId}`, {

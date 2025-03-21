@@ -16,7 +16,7 @@ export default function initWebSockets() {
 	});
 }
 
-async function createWebsocket(server: string) {
+export async function createWebsocket(server: string) {
 	const ws = await WebSocket.connect(`${server}/ws`);
 
 	ws.addListener((event: Message) => {

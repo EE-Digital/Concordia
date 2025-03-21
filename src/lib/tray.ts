@@ -43,7 +43,7 @@ export default async function InitTray(window: Window) {
 		menu,
 		title: "concordia",
 		showMenuOnLeftClick: false,
-		icon: "icons/64x64.png",
+		icon: "icons/32x32.png",
 		action: (event: TrayIconEvent) => {
 			switch (event.type) {
 				case "Click":
