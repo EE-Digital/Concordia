@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getEmojiFromCodepoint, getEmojiUrlFromCodepoint, hexCodepointFromDec, type EmojiMetadata } from "../../lib/emoji";
+	import { emojiFromDecCodepoint, getEmojiSvgFromCodepoint, hexCodepointFromDec, type EmojiMetadata } from "../../lib/emoji";
 
 	type Props = {
 		emoji: EmojiMetadata;
@@ -9,8 +9,8 @@
 	const { emoji, onselect }: Props = $props();
 
 	const codepoint = hexCodepointFromDec(emoji.base);
-	const url = getEmojiUrlFromCodepoint(codepoint);
-	const emojiCharacter = getEmojiFromCodepoint(codepoint);
+	const svg = getEmojiSvgFromCodepoint(codepoint);
+	const emojiCharacter = emojiFromDecCodepoint(emoji.base);
 
 	function handleClick(e: MouseEvent) {
 		onselect(emojiCharacter, !e.shiftKey);
@@ -18,5 +18,9 @@
 </script>
 
 <button class="w-12 h-12 flex justify-center items-center hover:bg-zinc-600 p-1 rounded cursor-pointer" onclick={handleClick}>
-	<img src={url} alt={emoji.shortcodes[0] ?? "emoji"} class="w-full h-full" />
+	{#await svg}
+		{emojiCharacter}
+	{:then xcode}
+		{@html xcode}
+	{/await}
 </button>
