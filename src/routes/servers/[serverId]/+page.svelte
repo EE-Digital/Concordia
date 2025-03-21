@@ -65,6 +65,8 @@
 	}
 
 	async function selectChannel(channelId: string) {
+		if (activeChannel.channelId === channelId) return;
+
 		messages.messages = await getMessages(server!, channelId);
 		activeChannel.channelId = channelId;
 	}
@@ -80,10 +82,12 @@
 			<ChannelList channels={server!.channels} {selectChannel} selectedChannel={activeChannel.channelId} />
 		</div>
 		{#if activeChannel.channelId}
-			<div class="flex flex-col w-full pb-2">
-				<ChatWindow messages={messages.messages} />
-				<MessageBox {server} channelId={activeChannel.channelId} />
-			</div>
+			{#key activeChannel.channelId}
+				<div class="flex flex-col w-full pb-2">
+					<ChatWindow messages={messages.messages} />
+					<MessageBox {server} channelId={activeChannel.channelId} />
+				</div>
+			{/key}
 		{:else}
 			<div class="flex flex-col justify-center content-center w-full h-full">
 				<h1 class="text-center font-bold">No channels found</h1>

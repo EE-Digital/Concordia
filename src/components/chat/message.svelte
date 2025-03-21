@@ -8,6 +8,8 @@
 	};
 
 	const { message, hideAuthor = false }: Props = $props();
+
+	const parsedMessage = $derived(parseMarkdownToHtml(message.text as string));
 </script>
 
 <div class="mx-2 pl-2.5 rounded hover:bg-neutral-900">
@@ -24,5 +26,5 @@
 		</div>
 	{/if}
 
-	<div class="text-neutral-200">{@html parseMarkdownToHtml(message.text as string)}</div>
+	<div class="text-neutral-200">{@html parsedMessage}</div>
 </div>
