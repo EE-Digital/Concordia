@@ -22,6 +22,7 @@
 	const sendMessage = async () => {
 		message = message.trim();
 		if (message.length === 0) return;
+		if (isEmojiKeyboardVisible) isEmojiKeyboardVisible = false;
 
 		const data = await apiRequest(
 			"POST",
@@ -31,9 +32,7 @@
 			},
 			server.token,
 		);
-
 		message = "";
-		if (isEmojiKeyboardVisible) isEmojiKeyboardVisible = false;
 	};
 
 	const enterCheck = (e: KeyboardEvent) => {
@@ -43,8 +42,8 @@
 		}
 	};
 
+	let fileInput: HTMLInputElement;
 	const trrigetAttachment = () => {
-		const fileInput = document.getElementById("file_input") as HTMLInputElement;
 		fileInput.click();
 	};
 
@@ -73,7 +72,7 @@
 
 <div class="w-full px-1 flex pr-5 relative">
 	<!-- Do not delete, used for getting Attachment -->
-	<input type="file" name="file_input" id="file_input" style="display:none;" onchange={handleAttachment} max="1" />
+	<input type="file" bind:this={fileInput} style="display:none;" onchange={handleAttachment} max="1" />
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex bg-zinc-800 rounded-lg">

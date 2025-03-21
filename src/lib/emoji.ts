@@ -1,4 +1,5 @@
 import twemoji from "@discordapp/twemoji";
+import emojiOrdering from "../components/emoji/emojiOrdering.json";
 
 export type EmojiMetadata = {
 	base: number[];
@@ -36,11 +37,14 @@ const codepointRedirects: Record<string, string> = {
 	"1f441-fe0f-200d-1f5e8-fe0f": "1f441-200d-1f5e8",
 };
 
+export const hexCodepointFromDecRaw = (codePoints: number[]) => codePoints.map((point) => point.toString(16)).join("-");
+export const emojiFromDecCodepoint = (codePoints: number[]) => codePoints.map((point) => String.fromCodePoint(point)).join("");
+
 export const hexCodepointFromDec = (codePoints: number[]) => {
 	codePoints = [...codePoints];
 	const last = codePoints[codePoints.length - 1];
 	if (codePoints.length === 2 && (last === 0xfe0f || last === 0xff0e)) codePoints.pop();
-	const hexCodepoint = codePoints.map((point) => point.toString(16)).join("-");
+	const hexCodepoint = hexCodepointFromDecRaw(codePoints);
 
 	const redirectedCodepoint = codepointRedirects[hexCodepoint] || hexCodepoint;
 	return redirectedCodepoint;
@@ -49,3 +53,31 @@ export const getEmojiFromCodepoint = (codepoint: string) => twemoji.convert.from
 export const getCodepointFromEmoji = (emoji: string) => twemoji.convert.toCodePoint(emoji);
 export const getEmojiUrlFromCodepoint = (codepoint: string) => `/emoji/svg/${codepoint}.svg`;
 export const getEmojiUrl = (emoji: string) => getEmojiFromCodepoint(getCodepointFromEmoji(emoji));
+
+const emojiSvgs = new Map<string, Promise<string>>();
+async function prefetchOneEmoji(codepoint: string) {
+	if (emojiSvgs.has(codepoint)) return;
+
+	emojiSvgs.set(
+		codepoint,
+		new Promise(async (resolve, reject) => {
+			const url = getEmojiUrlFromCodepoint(codepoint);
+			const response = await fetch(url);
+			const code = await response.text();
+			resolve(code);
+		}),
+	);
+}
+export async function prefetchEmoji(codepoints: string[]) {
+	await Promise.all(codepoints.map(prefetchOneEmoji));
+}
+export async function prefetchAllEmojis() {
+	for (const group of emojiOrdering) {
+		for (const emoji of group.emoji) {
+			await prefetchOneEmoji(hexCodepointFromDec(emoji.base));
+		}
+	}
+}
+
+export const getEmojiSvgFromCodepoint = (codepoint: string) => emojiSvgs.get(codepoint);
+export const getEmojiSvg = (emoji: string) => getEmojiUrlFromCodepoint(getCodepointFromEmoji(emoji));
