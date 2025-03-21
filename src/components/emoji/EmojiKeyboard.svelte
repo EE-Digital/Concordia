@@ -29,6 +29,8 @@
 	const groupIcons = [IconSmile, IconPeople, IconAnimals, IconFood, IconTravel, IconActivities, IconObjects, IconSymbols, IconFlag];
 
 	const toggleGroupHandle = (index: number) => () => {
+		if (searchQuery.length > 0) searchQuery = "";
+
 		if (activeGroup === index) return;
 		scrollContainer.scrollTo({ top: 0 });
 		activeGroup = index;
