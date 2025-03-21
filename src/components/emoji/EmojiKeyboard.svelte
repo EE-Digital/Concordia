@@ -11,36 +11,93 @@
 	import IconObjects from "~icons/lucide/box";
 	import IconSymbols from "~icons/lucide/asterisk";
 	import IconFlag from "~icons/lucide/flag";
+	import IconSearch from "~icons/lucide/search";
+	import { autoFocus } from "$lib/use/autoFocus.svelte";
+	import type { EmojiMetadata } from "$lib/emoji";
 
-	let activeGroup = $state<number | undefined>(undefined);
+	let activeGroup = $state<number>(0);
+	let searchQuery = $state<string>("");
+	let scrollContainer: HTMLElement;
+	let emojiContainer: HTMLElement;
 
 	type Props = {
 		onselect: (emoji: string, close: boolean) => void;
+		close?: () => void;
 	};
-	let { onselect }: Props = $props();
+	let { onselect, close }: Props = $props();
 
 	const groupIcons = [IconSmile, IconPeople, IconAnimals, IconFood, IconTravel, IconActivities, IconObjects, IconSymbols, IconFlag];
 
 	const toggleGroupHandle = (index: number) => () => {
-		activeGroup = activeGroup === index ? undefined : index;
+		if (activeGroup === index) return;
+		scrollContainer.scrollTo({ top: 0 });
+		activeGroup = index;
 	};
+
+	function handleKeyboard(e: KeyboardEvent) {
+		if (e.code === "Escape") {
+			e.preventDefault();
+
+			if (searchQuery.length > 0) {
+				searchQuery = "";
+			} else if (close) {
+				close();
+			}
+		}
+	}
+
+	const openTime = new Date().getTime();
+	const closeDebounce = 100;
+	function clickOutside(e: MouseEvent) {
+		if (!emojiContainer) return;
+		if (emojiContainer.contains(e.target as Node)) return;
+		if (!close) return;
+		if (new Date().getTime() - openTime < closeDebounce) return;
+		close();
+	}
+
+	function runSearch(query: string): EmojiMetadata[] {
+		const normalized = query.toLowerCase().trim();
+		if (normalized.length === 0) return [];
+
+		return EmojiOrdering.flatMap((group) => group.emoji.filter((emoji) => emoji.shortcodes.some((keyword) => keyword.includes(normalized))));
+	}
+
+	const searchResults = $derived(runSearch(searchQuery));
 </script>
 
-<div class="h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden">
+<svelte:window onkeydown={handleKeyboard} onclick={clickOutside} />
+
+<div class="h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden" bind:this={emojiContainer}>
+	<div class="bg-zinc-900 p-2">
+		<div class="bg-zinc-950 rounded-xl flex items-center">
+			<input bind:value={searchQuery} placeholder="Search for emoji" class="w-full outline-0 py-2 px-2.5" use:autoFocus />
+			<button class="pr-2.5 cursor-pointer">
+				<IconSearch />
+			</button>
+		</div>
+	</div>
 	<div class="flex bg-zinc-900">
-		{#each EmojiOrdering as group, i}
+		{#each EmojiOrdering as _, i}
 			{@const GroupIcon = groupIcons[i]}
-			<button onclick={toggleGroupHandle(i)} class="py-2 w-full cursor-pointer flex justify-center border-b-2 text-lg {activeGroup === i ? 'bg-zinc-700 border-(--accent-color)' : 'text-neutral-400 border-transparent hover:bg-zinc-800 hover:text-neutral-300'}">
+			<button onclick={toggleGroupHandle(i)} class="py-2 w-full cursor-pointer flex justify-center border-b-2 text-lg {activeGroup === i && searchQuery.length === 0 ? 'bg-zinc-700 border-(--accent-color)' : 'text-neutral-400 border-transparent hover:bg-zinc-800 hover:text-neutral-300'}">
 				<GroupIcon />
 			</button>
 		{/each}
 	</div>
-	<div class="h-full w-full overflow-auto px-2">
-		{#each EmojiOrdering as group, i}
-			<div class="block" class:hidden={activeGroup !== i && activeGroup !== undefined}>
-				<div class="sticky top-0 bg-zinc-800 text-neutral-400 py-1">{group.group}</div>
-				<EmojiList emojis={group.emoji} {onselect} />
+	<div class="h-full w-full overflow-y-scroll px-2 pb-2" bind:this={scrollContainer}>
+		{#if searchQuery.length === 0}
+			{#key activeGroup}
+				<div class="block">
+					<div class="sticky top-0 bg-zinc-800 text-neutral-400 py-1">{EmojiOrdering[activeGroup].group}</div>
+					<EmojiList emojis={EmojiOrdering[activeGroup].emoji} {onselect} />
+				</div>
+			{/key}
+		{:else}
+			<div class="block">
+				<div class="sticky top-0 bg-zinc-800 text-neutral-400 py-1">Search results</div>
+				<EmojiList emojis={searchResults} {onselect} />
 			</div>
-		{/each}
+		{/if}
 	</div>
 </div>

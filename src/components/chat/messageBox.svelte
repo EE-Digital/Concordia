@@ -18,6 +18,7 @@
 
 	let isEmojiKeyboardVisible = $state(false);
 	let message = $state("");
+	let inputElement: HTMLInputElement;
 
 	const sendMessage = async () => {
 		message = message.trim();
@@ -65,8 +66,32 @@
 		if (response.status != 200) console.error("Failed sending attachment");
 	};
 
+	let lastCursorPos = 0;
+	let lastCursorPosEnd = 0;
 	const toggleEmojiKeyboard = () => {
+		if (!isEmojiKeyboardVisible) {
+			lastCursorPos = inputElement.selectionStart || 0;
+			lastCursorPosEnd = inputElement.selectionEnd || 0;
+		} else {
+			setTimeout(() => {
+				inputElement.focus();
+				inputElement.setSelectionRange(lastCursorPos, lastCursorPosEnd);
+			}, 0);
+		}
+
 		isEmojiKeyboardVisible = !isEmojiKeyboardVisible;
+	};
+	const closeEmojiKeyboard = () => {
+		if (isEmojiKeyboardVisible) toggleEmojiKeyboard();
+	};
+	const insertEmoji = (emoji: string, close: boolean) => {
+		const insertSpaceOnEnd = lastCursorPos === lastCursorPosEnd && lastCursorPos === message.length;
+		if (insertSpaceOnEnd) emoji += " ";
+		message = message.slice(0, lastCursorPos) + emoji + message.slice(lastCursorPosEnd);
+		lastCursorPos += emoji.length;
+		lastCursorPosEnd = lastCursorPos;
+
+		if (close) closeEmojiKeyboard();
 	};
 </script>
 
@@ -76,7 +101,7 @@
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex bg-zinc-800 rounded-lg">
-			<input onkeypress={enterCheck} type="text" bind:value={message} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" />
+			<input onkeypress={enterCheck} type="text" bind:value={message} bind:this={inputElement} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" />
 			<button onclick={toggleEmojiKeyboard} class="flex flex-col justify-center items-center cursor-pointer hover:text-white">
 				<IconEmoji />
 			</button>
@@ -109,13 +134,7 @@
 	<!-- Emoji Keyboard -->
 	{#if isEmojiKeyboardVisible}
 		<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100">
-			<EmojiKeyboard
-				onselect={(emoji, close) => {
-					message += `${emoji} `;
-
-					if (close) isEmojiKeyboardVisible = false;
-				}}
-			/>
+			<EmojiKeyboard onselect={insertEmoji} close={closeEmojiKeyboard} />
 		</div>
 	{/if}
 </div>

@@ -7,7 +7,7 @@ export type EmojiMetadata = {
 	emoticons: string[];
 	shortcodes: string[];
 	animated: boolean;
-	directional: boolean;
+	directional?: boolean;
 };
 
 const twemojiOptions = {
