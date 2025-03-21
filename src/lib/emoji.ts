@@ -54,30 +54,17 @@ export const getCodepointFromEmoji = (emoji: string) => twemoji.convert.toCodePo
 export const getEmojiUrlFromCodepoint = (codepoint: string) => `/emoji/svg/${codepoint}.svg`;
 export const getEmojiUrl = (emoji: string) => getEmojiFromCodepoint(getCodepointFromEmoji(emoji));
 
-const emojiSvgs = new Map<string, Promise<string>>();
-async function prefetchOneEmoji(codepoint: string) {
-	if (emojiSvgs.has(codepoint)) return;
-
-	emojiSvgs.set(
-		codepoint,
-		new Promise(async (resolve, reject) => {
-			const url = getEmojiUrlFromCodepoint(codepoint);
-			const response = await fetch(url);
-			const code = await response.text();
-			resolve(code);
-		}),
-	);
-}
-export async function prefetchEmoji(codepoints: string[]) {
-	await Promise.all(codepoints.map(prefetchOneEmoji));
-}
-export async function prefetchAllEmojis() {
-	for (const group of emojiOrdering) {
-		for (const emoji of group.emoji) {
-			await prefetchOneEmoji(hexCodepointFromDec(emoji.base));
-		}
-	}
+const emojiCahce = new Map<string, string>();
+async function prefetchEmoji(codepoint: string) {
+	if (emojiCahce.has(codepoint)) return;
+	const url = getEmojiUrlFromCodepoint(codepoint);
+	const response = await fetch(url);
+	const code = await response.text();
+	emojiCahce.set(codepoint, code);
 }
 
-export const getEmojiSvgFromCodepoint = (codepoint: string) => emojiSvgs.get(codepoint);
+export const getEmojiSvgFromCodepoint = async (codepoint: string) => {
+	await prefetchEmoji(codepoint);
+	return emojiCahce.get(codepoint);
+};
 export const getEmojiSvg = (emoji: string) => getEmojiUrlFromCodepoint(getCodepointFromEmoji(emoji));

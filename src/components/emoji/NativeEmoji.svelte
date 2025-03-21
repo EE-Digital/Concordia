@@ -20,7 +20,7 @@
 <button class="w-12 h-12 flex justify-center items-center hover:bg-zinc-600 p-1 rounded cursor-pointer" onclick={handleClick}>
 	{#await svg}
 		{emojiCharacter}
-	{:then xcode}
-		{@html xcode}
+	{:then svgcode}
+		{@html svgcode}
 	{/await}
 </button>
