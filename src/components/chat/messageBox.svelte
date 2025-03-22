@@ -8,7 +8,6 @@
 	import IconSwords from "~icons/lucide/swords";
 	import IconEmoji from "~icons/lucide/smile";
 	import EmojiKeyboard from "../emoji/EmojiKeyboard.svelte";
-
 	type Props = {
 		server: Server;
 		channelId: string;
@@ -19,21 +18,28 @@
 	let isEmojiKeyboardVisible = $state(false);
 	let message = $state("");
 	let inputElement: HTMLInputElement;
+	let attachments: File[] = $state([]);
 
 	const sendMessage = async () => {
 		message = message.trim();
-		if (message.length === 0) return;
+		if (message.length === 0 && attachments.length === 0) return;
 		if (isEmojiKeyboardVisible) isEmojiKeyboardVisible = false;
+		const formData = new FormData();
 
-		const data = await apiRequest(
-			"POST",
-			`${server.serverUrl}/channels/${channelId}/messages`,
-			{
-				message,
+		formData.append("message", message);
+		attachments.forEach((file) => formData.append("file", file));
+
+		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
+			method: "POST",
+			headers: {
+				authorization: server.token,
 			},
-			server.token,
-		);
+			body: formData,
+		});
+
+		attachments = [];
 		message = "";
+		if (response.status != 200) console.error("Failed sending message");
 	};
 
 	const enterCheck = (e: KeyboardEvent) => {
@@ -49,21 +55,10 @@
 	};
 
 	const handleAttachment = async (e: any) => {
-		const file = e.target.files[0];
-		console.log(file);
-		if (!file) return;
-
-		const data = new FormData();
-		data.append("f", file);
-
-		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages/attachment`, {
-			method: "POST",
-			headers: {
-				authorization: server.token,
-			},
-			body: data,
-		});
-		if (response.status != 200) console.error("Failed sending attachment");
+		const files: File[] = Array.from(e.target.files);
+		files.forEach((file) => attachments.push(file));
+		attachments = attachments; // Trigger reactivity
+		console.log(attachments);
 	};
 
 	let lastCursorPos = 0;
@@ -97,7 +92,7 @@
 
 <div class="w-full px-1 flex pr-5 relative">
 	<!-- Do not delete, used for getting Attachment -->
-	<input type="file" bind:this={fileInput} style="display:none;" onchange={handleAttachment} max="1" />
+	<input type="file" bind:this={fileInput} style="display:none;" onchange={handleAttachment} multiple />
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex bg-zinc-800 rounded-lg">
@@ -105,7 +100,7 @@
 			<button onclick={toggleEmojiKeyboard} class="flex flex-col justify-center items-center cursor-pointer hover:text-white">
 				<IconEmoji />
 			</button>
-			<button onclick={sendMessage} class="flex flex-col justify-center items-center bg-zinc-800 w-10 h-10 rounded m-1" class:color={message.length > 0}>
+			<button onclick={sendMessage} class="flex flex-col justify-center items-center bg-zinc-800 w-10 h-10 rounded m-1" class:color={message.length > 0 || attachments.length > 0}>
 				<SendButton class="text-white cursor-pointer" />
 			</button>
 		</div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { parseMarkdownToHtml } from "$lib/markdown";
+	import { openUrl } from "@tauri-apps/plugin-opener";
 	import type { Message as MessageType } from "../../types/Message";
 
 	type Props = {
@@ -27,4 +28,19 @@
 	{/if}
 
 	<div class="text-neutral-200">{@html parsedMessage}</div>
+	{#each message.files as file}
+		{#if file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/webp"}
+			<img src={`${file.url}`} class="max-h-80 max-w-80 rounded my-1" alt="" />
+		{:else}
+			<div class="bg-zinc-800 p-3 rounded w-min flex items-center">
+				<h1>{file.filename}</h1>
+				<button
+					class="ml-5 p-2 px-3 rounded bg-zinc-900 cursor-pointer"
+					onclick={() => {
+						openUrl(file.url);
+					}}>Open</button
+				>
+			</div>
+		{/if}
+	{/each}
 </div>
