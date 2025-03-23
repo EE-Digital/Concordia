@@ -12,7 +12,7 @@
 	import { page } from "$app/state";
 	import MessageBox from "../../../components/chat/messageBox.svelte";
 	import { activeChannel, messages } from "../../../components/store.svelte";
-	import { clickOutside } from "$lib/use/clickOutside.svelte";
+	import ServerActions from "./ServerActions.svelte";
 
 	let server: Server | undefined = $state(undefined);
 	// let messages: Awaited<Message[]> = $state([]);
@@ -114,16 +114,7 @@
 
 				<!-- Server edit menu -->
 				{#if isServerEditOpen}
-					<div class="absolute bg-zinc-800 w-3 h-3 transform -translate-x-1/2 -translate-y-1/2 rotate-45 top-9 left-1/2"></div>
-					<div
-						class="absolute bg-zinc-800 w-full top-9 p-2 rounded-lg flex flex-col gap-1"
-						use:clickOutside={() => {
-							closeServerEdit();
-						}}
-					>
-						<button class="hover:bg-(--accent-color) py-1 px-2 w-full rounded text-left cursor-pointer"> Button 1 </button>
-						<button class="hover:bg-(--accent-color) py-1 px-2 w-full rounded text-left cursor-pointer"> Button 1 </button>
-					</div>
+					<ServerActions {closeServerEdit} {server} />
 				{/if}
 			</div>
 			<div class=" w-full h-full overflow-auto mt-1 rounded">

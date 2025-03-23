@@ -1,4 +1,4 @@
-export default async function apiRequest(method: "POST" | "GET", url: string, body?: any, token?: string) {
+export default async function apiRequest(method: "POST" | "GET" | "DELETE", url: string, body?: any, token?: string) {
 	try {
 		const response = await fetch(url, {
 			method: method,

@@ -1,21 +1,12 @@
 <script lang="ts">
+	import logoutFromServer from "$lib/logoutFromServer";
 	import type { Server } from "../../types/LocalData";
-	import { serverList } from "../servers/getServers.svelte";
 
 	type Props = {
 		server: Server;
 	};
 
 	const { server }: Props = $props();
-
-	const handleDelete = () => {
-		const newServers = serverList.servers.filter((s) => s.token !== server.token);
-		serverList.servers = newServers;
-
-		// TODO request deletion of token from server
-
-		localStorage.setItem("servers", JSON.stringify(newServers));
-	};
 </script>
 
 <div class="bg-[#2f2f2f] flex flex-col justify-between items-center rounded-lg p-1.5 px-3 w-38">
@@ -32,7 +23,7 @@
 	<h2>{server.username}</h2>
 
 	<div class="flex w-full mt-2">
-		<button onclick={handleDelete} class="w-full rounded-lg px-2 py-1 cursor-pointer mx-1 bg-(--background-color) hover:bg-red-500">Remove</button>
+		<button onclick={() => logoutFromServer(server)} class="w-full rounded-lg px-2 py-1 cursor-pointer mx-1 bg-(--background-color) hover:bg-red-500">Remove</button>
 	</div>
 </div>
 
