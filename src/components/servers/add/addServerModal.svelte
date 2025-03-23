@@ -1,11 +1,9 @@
 <script lang="ts">
-	import apiRequest from "$lib/apiRequest";
-	import { debounce } from "$lib/debounce";
-  import { autoFocus } from "$lib/use/autoFocus.svelte";
-  import { validateUrl } from "$lib/validators";
-  import { openJoinServerPage } from "../../../routes/servers/join/joinController.svelte";
+	import { autoFocus } from "$lib/use/autoFocus.svelte";
+	import { validateUrl } from "$lib/validators";
+	import { openJoinServerPage } from "../../../routes/servers/join/joinController.svelte";
 	import Modal from "../../core/modal.svelte";
-  import StyledButton from "../../core/styledButton.svelte";
+	import StyledButton from "../../core/styledButton.svelte";
 	import { serverList } from "../getServers.svelte";
 	import IconRight from "~icons/lucide/chevron-right";
 
@@ -19,7 +17,7 @@
 	});
 
 	let serverUrl = $state("");
-	let errorMessage = $state<string|true>(true);
+	let errorMessage = $state<string | true>(true);
 	let loading = $state(false);
 
 	const closeForm = () => {

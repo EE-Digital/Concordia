@@ -1,39 +1,48 @@
 <script lang="ts">
-	import type { Message as MessageType } from "../../types/Message";
-
-	import { openUrl } from "@tauri-apps/plugin-opener";
+	import { formatBytes } from "$lib/formater";
+	import IconFile from "~icons/lucide/file";
+	import IconTrash from "~icons/lucide/trash";
 
 	type Props = {
-		message: MessageType;
-		hideAuthor?: boolean;
+		attachment: File;
+		remove: () => void;
 	};
 
-	const { message, hideAuthor = false }: Props = $props();
+	const { attachment, remove }: Props = $props();
 
-	const handleClick = async () => {
-		await openUrl(message.file!.path);
-	};
+	let url: string | undefined = undefined;
+
+	$effect(() => {
+		console.log("xoxo");
+		if (url) URL.revokeObjectURL(url);
+		url = URL.createObjectURL(attachment);
+
+		return () => {
+			console.log("revoking");
+			if (url) URL.revokeObjectURL(url);
+		};
+	});
 </script>
 
-<div class="mx-2 pl-2.5 rounded hover:bg-neutral-900">
-	{#if !hideAuthor}
-		<div class="flex items-center mt-3 mb-1">
-			{#if message.author.profileUrl}
-				<img src={message.author.profileUrl} alt="" />
-			{:else}
-				<div class="w-8 h-8 rounded flex items-center justify-center font-bold bg-purple-700">
-					{message.author.name.slice(0, 2)}
-				</div>
-			{/if}
-			<h1 class="ml-2 font-semibold">{message.author.name}</h1>
-		</div>
-	{/if}
-	{#if message.file?.mimetype === "image/jpeg" || message.file?.mimetype === "image/png" || message.file?.mimetype === "image/webp"}
-		<img src={`${message.file?.path}`} class="max-h-80 max-w-80 rounded my-1" alt="" />
-	{:else}
-		<div class="bg-zinc-800 p-3 rounded w-min flex items-center">
-			<h1>{message.file?.filename}</h1>
-			<button class="ml-5 p-2 px-3 rounded bg-zinc-900 cursor-pointer" onclick={handleClick}>Open</button>
-		</div>
-	{/if}
+<div class="flex rounded-xl bg-zinc-900 p-2 gap-2 group">
+	<div class="w-10 h-10 bg-zinc-800 rounded-lg flex justify-center items-center">
+		<!-- Preview -->
+		{#if attachment.type.startsWith("image/")}
+			<img src={URL.createObjectURL(attachment)} alt={attachment.name} title={attachment.name} class="w-full h-full object-cover rounded-lg" draggable="false" />
+		{:else}
+			<IconFile class="text-white" />
+		{/if}
+	</div>
+	<div>
+		<!-- Metadata -->
+		<div class="w-30 text-xs font-semibold text-nowrap overflow-hidden overflow-ellipsis" title={attachment.name}>{attachment.name}</div>
+		<div class="w-30 text-xs text-neutral-300">{formatBytes(attachment.size)}</div>
+	</div>
+
+	<!-- Remove button -->
+	<button class="flex items-center justify-center w-5 h-5 rounded-full bg-zinc-800 hover:bg-red-400 cursor-pointer invisible group-hover:visible" onclick={remove}>
+		<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+		</svg>
+	</button>
 </div>

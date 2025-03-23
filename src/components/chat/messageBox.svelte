@@ -1,6 +1,5 @@
 <script lang="ts">
 	import SendButton from "~icons/lucide/send";
-	import apiRequest from "$lib/apiRequest";
 	import type { Server } from "../../types/LocalData";
 	import IconFile from "~icons/lucide/file";
 	import IconImage from "~icons/lucide/image";
@@ -8,7 +7,7 @@
 	import IconSwords from "~icons/lucide/swords";
 	import IconEmoji from "~icons/lucide/smile";
 	import EmojiKeyboard from "../emoji/EmojiKeyboard.svelte";
-
+	import Attachment from "./attachment.svelte";
 	type Props = {
 		server: Server;
 		channelId: string;
@@ -18,22 +17,29 @@
 
 	let isEmojiKeyboardVisible = $state(false);
 	let message = $state("");
+	let inputElement: HTMLInputElement;
+	let attachments: File[] = $state([]);
 
 	const sendMessage = async () => {
 		message = message.trim();
-		if (message.length === 0) return;
-
-		const data = await apiRequest(
-			"POST",
-			`${server.serverUrl}/channels/${channelId}/messages`,
-			{
-				message,
-			},
-			server.token,
-		);
-
-		message = "";
+		if (message.length === 0 && attachments.length === 0) return;
 		if (isEmojiKeyboardVisible) isEmojiKeyboardVisible = false;
+		const formData = new FormData();
+
+		formData.append("message", message);
+		attachments.forEach((file) => formData.append("file", file));
+
+		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
+			method: "POST",
+			headers: {
+				authorization: server.token,
+			},
+			body: formData,
+		});
+
+		attachments = [];
+		message = "";
+		if (response.status != 200) console.error("Failed sending message");
 	};
 
 	const enterCheck = (e: KeyboardEvent) => {
@@ -43,46 +49,77 @@
 		}
 	};
 
+	let fileInput: HTMLInputElement;
 	const trrigetAttachment = () => {
-		const fileInput = document.getElementById("file_input") as HTMLInputElement;
 		fileInput.click();
 	};
 
 	const handleAttachment = async (e: any) => {
-		const file = e.target.files[0];
-		if (!file) return;
-
-		const data = new FormData();
-		data.append("f", file);
-
-		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages/attachment`, {
-			method: "POST",
-			headers: {
-				authorization: server.token,
-			},
-			body: data,
-		});
-		if (response.status != 200) console.error("Failed sending attachment");
+		const files: File[] = Array.from(e.target.files);
+		files.forEach((file) => attachments.push(file));
+		attachments = attachments; // Trigger reactivity
+		console.log(attachments);
 	};
 
+	let lastCursorPos = 0;
+	let lastCursorPosEnd = 0;
 	const toggleEmojiKeyboard = () => {
+		if (!isEmojiKeyboardVisible) {
+			lastCursorPos = inputElement.selectionStart || 0;
+			lastCursorPosEnd = inputElement.selectionEnd || 0;
+		} else {
+			setTimeout(() => {
+				inputElement.focus();
+				inputElement.setSelectionRange(lastCursorPos, lastCursorPosEnd);
+			}, 0);
+		}
+
 		isEmojiKeyboardVisible = !isEmojiKeyboardVisible;
+	};
+	const closeEmojiKeyboard = () => {
+		if (isEmojiKeyboardVisible) toggleEmojiKeyboard();
+	};
+	const insertEmoji = (emoji: string, close: boolean) => {
+		const insertSpaceOnEnd = lastCursorPos === lastCursorPosEnd && lastCursorPos === message.length;
+		if (insertSpaceOnEnd) emoji += " ";
+		message = message.slice(0, lastCursorPos) + emoji + message.slice(lastCursorPosEnd);
+		lastCursorPos += emoji.length;
+		lastCursorPosEnd = lastCursorPos;
+
+		if (close) closeEmojiKeyboard();
 	};
 </script>
 
 <div class="w-full px-1 flex pr-5 relative">
 	<!-- Do not delete, used for getting Attachment -->
-	<input type="file" name="file_input" id="file_input" style="display:none;" onchange={handleAttachment} max="1" />
+	<input type="file" bind:this={fileInput} style="display:none;" onchange={handleAttachment} multiple />
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
-		<div class="w-full flex bg-zinc-800 rounded-lg">
-			<input onkeypress={enterCheck} type="text" bind:value={message} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" />
-			<button onclick={toggleEmojiKeyboard} class="flex flex-col justify-center items-center cursor-pointer hover:text-white">
-				<IconEmoji />
-			</button>
-			<button onclick={sendMessage} class="flex flex-col justify-center items-center bg-zinc-800 w-10 h-10 rounded m-1" class:color={message.length > 0}>
-				<SendButton class="text-white cursor-pointer" />
-			</button>
+		<div class="w-full flex flex-col bg-zinc-800 rounded-lg">
+			<!-- Attachment list -->
+			{#if attachments.length > 0}
+				<div class="w-full flex pt-2 px-4 gap-2 overflow-x-auto">
+					{#each attachments as attachment}
+						<Attachment
+							{attachment}
+							remove={() => {
+								attachments = attachments.filter((file) => file !== attachment);
+							}}
+						/>
+					{/each}
+				</div>
+			{/if}
+
+			<!-- Send message -->
+			<div class="w-full flex">
+				<input onkeypress={enterCheck} type="text" bind:value={message} bind:this={inputElement} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" />
+				<button onclick={toggleEmojiKeyboard} class="flex flex-col justify-center items-center cursor-pointer hover:text-white">
+					<IconEmoji />
+				</button>
+				<button onclick={sendMessage} class="flex flex-col justify-center items-center bg-zinc-800 w-10 h-10 rounded m-1" class:color={message.length > 0 || attachments.length > 0}>
+					<SendButton class="text-white cursor-pointer" />
+				</button>
+			</div>
 		</div>
 
 		<!-- Tools -->
@@ -107,15 +144,11 @@
 	</div>
 
 	<!-- Emoji Keyboard -->
-	<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100" class:hidden={!isEmojiKeyboardVisible}>
-		<EmojiKeyboard
-			onselect={(emoji, close) => {
-				message += `${emoji} `;
-
-				if (close) isEmojiKeyboardVisible = false;
-			}}
-		/>
-	</div>
+	{#if isEmojiKeyboardVisible}
+		<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100">
+			<EmojiKeyboard onselect={insertEmoji} close={closeEmojiKeyboard} />
+		</div>
+	{/if}
 </div>
 
 <style>

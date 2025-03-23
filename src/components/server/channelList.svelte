@@ -3,7 +3,7 @@
 </script>
 
 {#each channels as channel}
-	<button onclick={() => selectChannel(channel.id)} style={channel.id === selectedChannel ? "background-color: #FFFFFF33;" : ""} class="cursor-pointer w-full rounded py-1 my-1 mx-1">
+	<button onclick={() => selectChannel(channel.id)} style={channel.id === selectedChannel ? "background-color: #FFFFFF33;" : ""} class="cursor-pointer w-full rounded py-1 my-1">
 		{channel.title}
 	</button>
 {:else}

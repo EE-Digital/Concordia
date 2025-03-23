@@ -11,5 +11,25 @@
 	overflow: hidden;
 	height: 100vh;
 	width: 100vw;
-	/* zoom: 2; */
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 0.5rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #222;
+	border-radius: 0.25rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #444;
 }

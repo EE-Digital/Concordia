@@ -7,6 +7,7 @@
 		"core:default",
 		"deep-link:default",
 		"store:default",
+		"websocket:default",
 		{
 			"identifier": "opener:allow-open-url",
 			"allow": [
@@ -14,6 +15,9 @@
 					"url": ".*"
 				}
 			]
-		}
+		},
+		"process:default",
+		"core:window:allow-hide",
+		"core:window:allow-show"
 	]
 }

@@ -2,7 +2,8 @@ import insane, { type SanitizeOptions } from "insane";
 import { parseEmoji } from "./emoji";
 
 const escapeHtml = (unsafe: string) => {
-	return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+	if (unsafe) return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+	return "";
 };
 
 const parseMakrdown = (markdown: string) => {

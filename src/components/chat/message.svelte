@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { parseMarkdownToHtml } from "$lib/markdown";
+	import { openUrl } from "@tauri-apps/plugin-opener";
 	import type { Message as MessageType } from "../../types/Message";
+
+	import IconLink from "~icons/lucide/square-arrow-out-up-right";
+	import IconFile from "~icons/lucide/file";
 
 	type Props = {
 		message: MessageType;
@@ -8,6 +12,8 @@
 	};
 
 	const { message, hideAuthor = false }: Props = $props();
+
+	const parsedMessage = $derived(parseMarkdownToHtml(message.text as string));
 </script>
 
 <div class="mx-2 pl-2.5 rounded hover:bg-neutral-900">
@@ -24,5 +30,27 @@
 		</div>
 	{/if}
 
-	<div class="text-neutral-200">{@html parseMarkdownToHtml(message.text as string)}</div>
+	<div class="text-neutral-200">{@html parsedMessage}</div>
+
+	<div class="flex flex-col gap-2 mb-1">
+		{#each message.files as file}
+			{#if file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/webp"}
+				<img src={`${file.url}`} class="max-h-80 max-w-80 rounded object-cover" alt={file.filename} />
+			{:else}
+				<div class="bg-zinc-800 p-3 rounded w-min flex items-center gap-2">
+					<IconFile />
+					<div>{file.filename}</div>
+					<button
+						class="p-2 px-3 ml-2 rounded bg-zinc-900 hover:bg-(--accent-color) cursor-pointer flex gap-2 items-center"
+						onclick={() => {
+							openUrl(file.url);
+						}}
+					>
+						Open
+						<IconLink class="text-sm" />
+					</button>
+				</div>
+			{/if}
+		{/each}
+	</div>
 </div>

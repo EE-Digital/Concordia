@@ -12,7 +12,7 @@
 	const { emojis, onselect }: Props = $props();
 </script>
 
-<div class="grid grid-cols-8">
+<div class="grid grid-cols-8 w-96">
 	{#each emojis as emoji}
 		<NativeEmoji {emoji} {onselect} />
 	{/each}
