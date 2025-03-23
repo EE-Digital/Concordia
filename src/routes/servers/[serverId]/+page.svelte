@@ -73,7 +73,7 @@
 </script>
 
 {#if server !== undefined}
-	<div class="flex h-full w-full gap-2">
+	<div class="max-w-full flex h-full w-full gap-2">
 		<div id="sidebar" class="min-w-40 w-40">
 			<button onclick={handleServerEdit} class="font-semibold h-12 w-full cursor-pointer flex justify-center items-center mx-1">
 				{(server as Server).name}
