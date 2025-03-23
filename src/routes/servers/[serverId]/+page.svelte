@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { Server } from "../../../types/LocalData";
 	import type { Message } from "../../../types/Message";
-	import Settings from "~icons/lucide/chevron-down";
-	import { getChannels, getChannelsCached } from "./serverCache";
+	import IconSettings from "~icons/lucide/chevron-down";
+	import IconClose from "~icons/lucide/x";
+
+	import { getChannels } from "./serverCache";
 	import ChatWindow from "../../../components/chat/chatWindow.svelte";
 	import ChannelList from "../../../components/server/channelList.svelte";
 	import { goto } from "$app/navigation";
@@ -10,6 +12,8 @@
 	import { page } from "$app/state";
 	import MessageBox from "../../../components/chat/messageBox.svelte";
 	import { activeChannel, messages } from "../../../components/store.svelte";
+	import { clickOutside } from "$lib/use/clickOutside.svelte";
+
 	let server: Server | undefined = $state(undefined);
 	// let messages: Awaited<Message[]> = $state([]);
 	let lastParam: number = -1;
@@ -43,8 +47,14 @@
 		return 0;
 	}
 
-	function handleServerEdit() {
+	let isServerEditOpen = $state(false);
+	function toggleServerEdit() {
+		isServerEditOpen = !isServerEditOpen;
 		// window.location.href = `/servers/${(server as Server).id}/edit`;
+	}
+
+	function closeServerEdit() {
+		isServerEditOpen = false;
 	}
 
 	async function getMessages(server: Server, channelId: string) {
@@ -70,16 +80,59 @@
 		messages.messages = await getMessages(server!, channelId);
 		activeChannel.channelId = channelId;
 	}
+
+	function handleKeyboard(e: KeyboardEvent) {
+		if (e.code === "Escape") {
+			e.preventDefault();
+
+			if (isServerEditOpen) {
+				closeServerEdit();
+			}
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleKeyboard} />
 
 {#if server !== undefined}
 	<div class="max-w-full flex h-full w-full gap-2">
-		<div id="sidebar" class="min-w-40 w-40">
-			<button onclick={handleServerEdit} class="font-semibold h-12 w-full cursor-pointer flex justify-center items-center mx-1">
-				{(server as Server).name}
-				<Settings class="ml-1.5" />
-			</button>
-			<ChannelList channels={server!.channels} {selectChannel} selectedChannel={activeChannel.channelId} />
+		<div id="sidebar" class="min-w-40 w-40 flex flex-col py-1">
+			<div class="w-full relative">
+				<button onclick={toggleServerEdit} class="w-full rounded rounded-tr-lg p-1 outline-0">
+					<div class="flex justify-between font-semibold w-full cursor-pointer text-left overflow-ellipsis overflow-hidden overflow">
+						{(server as Server).name}
+						{#if isServerEditOpen}
+							<IconClose class="text-sm mt-0.5" />
+						{:else}
+							<IconSettings class="text-sm mt-0.5" />
+						{/if}
+					</div>
+					<p class="text-sm text-left max-h-10 overflow-hidden overflow-elipsis text-neutral-500" title={server.description}>
+						{server.description}
+					</p>
+				</button>
+
+				<!-- Server edit menu -->
+				{#if isServerEditOpen}
+					<div class="absolute bg-zinc-800 w-3 h-3 transform -translate-x-1/2 -translate-y-1/2 rotate-45 top-9 left-1/2"></div>
+					<div
+						class="absolute bg-zinc-800 w-full top-9 p-2 rounded-lg flex flex-col gap-1"
+						use:clickOutside={() => {
+							closeServerEdit();
+						}}
+					>
+						<button class="hover:bg-(--accent-color) py-1 px-2 w-full rounded text-left cursor-pointer"> Button 1 </button>
+						<button class="hover:bg-(--accent-color) py-1 px-2 w-full rounded text-left cursor-pointer"> Button 1 </button>
+					</div>
+				{/if}
+			</div>
+			<div class=" w-full h-full overflow-auto mt-1 rounded">
+				<ChannelList channels={server!.channels} {selectChannel} selectedChannel={activeChannel.channelId} />
+			</div>
+			<!-- User card -->
+			<div class="w-full h-20 bg-zinc-900 rounded rounded-br-lg mt-1">
+				<!-- Will do... one day.$$ -->
+			</div>
 		</div>
 		{#if activeChannel.channelId}
 			{#key activeChannel.channelId}

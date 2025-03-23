@@ -14,11 +14,11 @@
 	import IconSearch from "~icons/lucide/search";
 	import { autoFocus } from "$lib/use/autoFocus.svelte";
 	import type { EmojiMetadata } from "$lib/emoji";
+	import { clickOutside } from "$lib/use/clickOutside.svelte";
 
 	let activeGroup = $state<number>(0);
 	let searchQuery = $state<string>("");
 	let scrollContainer: HTMLElement;
-	let emojiContainer: HTMLElement;
 
 	type Props = {
 		onselect: (emoji: string, close: boolean) => void;
@@ -48,16 +48,6 @@
 		}
 	}
 
-	const openTime = new Date().getTime();
-	const closeDebounce = 100;
-	function clickOutside(e: MouseEvent) {
-		if (!emojiContainer) return;
-		if (emojiContainer.contains(e.target as Node)) return;
-		if (!close) return;
-		if (new Date().getTime() - openTime < closeDebounce) return;
-		close();
-	}
-
 	function runSearch(query: string): EmojiMetadata[] {
 		const normalized = query.toLowerCase().trim();
 		if (normalized.length === 0) return [];
@@ -68,9 +58,14 @@
 	const searchResults = $derived(runSearch(searchQuery));
 </script>
 
-<svelte:window onkeydown={handleKeyboard} onclick={clickOutside} />
+<svelte:window onkeydown={handleKeyboard} />
 
-<div class="h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden" bind:this={emojiContainer}>
+<div
+	class="h-full flex flex-col bg-zinc-800 rounded-2xl overflow-hidden"
+	use:clickOutside={() => {
+		if (close) close();
+	}}
+>
 	<div class="bg-zinc-900 p-2">
 		<div class="bg-zinc-950 rounded-xl flex items-center">
 			<input bind:value={searchQuery} placeholder="Search for emoji" class="w-full outline-0 py-2 px-2.5" use:autoFocus />
