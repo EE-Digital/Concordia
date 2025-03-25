@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { serverList } from "../../../components/servers/getServers.svelte";
 	import ServerCard from "../../../components/settings/ServerCard.svelte";
 </script>

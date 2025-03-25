@@ -17,10 +17,10 @@
 
 	let actions: action[] = [
 		{
-			title: "Server settings",
+			title: "Configuration",
 			icon: Settings,
 			func: () => {
-				console.log("HAHA you thought I'd finish my code? Silly you");
+				goto(`/servers/${server.id}/settings/general`);
 			},
 			hasPermissions: () => {
 				return true;
@@ -47,9 +47,11 @@
 	}}
 >
 	{#each actions.filter((action) => action.hasPermissions()) as action}
-		<button class="flex items-center justify-between hover:bg-(--accent-color) py-1 px-2 w-full rounded text-left cursor-pointer {action.danger ? 'text-red-500' : ''}" onclick={action.func}>
+		<button class="flex items-center justify-between py-1 px-2 w-full rounded text-left cursor-pointer {action.danger ? 'text-red-500 hover:bg-red-500 hover:text-white' : 'hover:bg-(--accent-color)'}" onclick={action.func}>
 			<action.icon class="text-md" />
-			{action.title}
+			<p class="text-md text-nowrap overflow-ellipsis overflow-hidden">
+				{action.title}
+			</p>
 		</button>
 	{/each}
 </div>

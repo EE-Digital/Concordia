@@ -6,7 +6,7 @@
 	import UpdateIndicator from "../update/UpdateIndicator.svelte";
 </script>
 
-<div class="m-1 p-2 overflow-hidden rounded rounded-l-lg gap-1.5 flex flex-col">
+<div class="m-1 p-2 z-10 rounded rounded-l-lg gap-1.5 flex flex-col">
 	{#each serverList.servers as server}
 		<ServerWidget {server} />
 	{/each}
