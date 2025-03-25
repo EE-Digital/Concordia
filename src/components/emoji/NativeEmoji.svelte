@@ -8,9 +8,9 @@
 
 	const { emoji, onselect }: Props = $props();
 
-	const codepoint = hexCodepointFromDec(emoji.base);
-	const svg = getEmojiSvgFromCodepoint(codepoint);
-	const emojiCharacter = emojiFromDecCodepoint(emoji.base);
+	const codepoint = $derived(hexCodepointFromDec(emoji.base));
+	const svg = $derived(getEmojiSvgFromCodepoint(codepoint));
+	const emojiCharacter = $derived(emojiFromDecCodepoint(emoji.base));
 
 	function handleClick(e: MouseEvent) {
 		onselect(emojiCharacter, !e.shiftKey);

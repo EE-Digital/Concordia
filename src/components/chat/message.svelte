@@ -35,7 +35,7 @@
 	<div class="flex flex-col gap-2 mb-1">
 		{#each message.files as file}
 			{#if file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/webp"}
-				<img src={`${file.url}`} class="max-h-80 max-w-80 rounded object-cover" alt={file.filename} />
+				<img src={file.url} class="max-h-80 max-w-80 rounded object-cover" alt={file.filename} />
 			{:else}
 				<div class="bg-zinc-800 p-3 rounded w-min flex items-center gap-2">
 					<IconFile />
