@@ -1,13 +1,15 @@
 <script lang="ts">
-	import SendButton from "~icons/lucide/send";
+	import { readImage } from "@tauri-apps/plugin-clipboard-manager";
 	import type { Server } from "../../types/LocalData";
+	import EmojiKeyboard from "../emoji/EmojiKeyboard.svelte";
+	import Attachment from "./attachment.svelte";
+	import SendButton from "~icons/lucide/send";
 	import IconFile from "~icons/lucide/file";
 	import IconImage from "~icons/lucide/image";
 	import IconPool from "~icons/lucide/chart-pie";
 	import IconSwords from "~icons/lucide/swords";
 	import IconEmoji from "~icons/lucide/smile";
-	import EmojiKeyboard from "../emoji/EmojiKeyboard.svelte";
-	import Attachment from "./attachment.svelte";
+
 	type Props = {
 		server: Server;
 		channelId: string;
@@ -88,6 +90,36 @@
 
 		if (close) closeEmojiKeyboard();
 	};
+
+	async function handlePasteImage(e: KeyboardEvent) {
+		if (e.key !== "v" || !e.ctrlKey) return;
+
+		try {
+			// Load the image from the clipboard
+			const image = await readImage();
+			if (!image) return;
+			const size = await image.size();
+			const pixelData = await image.rgba();
+
+			// Redraw data into image
+			const drawCanvas = document.createElement("canvas");
+			drawCanvas.width = size.width;
+			drawCanvas.height = size.height;
+			const ctx = drawCanvas.getContext("2d");
+			if (!ctx) return;
+			const imageData = ctx.createImageData(size.width, size.height);
+			imageData.data.set(pixelData);
+			ctx.putImageData(imageData, 0, 0);
+
+			// Convert image to PNG image
+			const blobData: Blob = await new Promise((resolve) => drawCanvas.toBlob(resolve, "image/png"));
+			const file = new File([blobData], "clipboard.png", { type: "image/png" });
+
+			// Push to upload file list
+			attachments.push(file);
+			attachments = attachments; // Trigger reactivity
+		} catch (e) {}
+	}
 </script>
 
 <div class="w-full px-1 flex pr-5 relative">
@@ -112,7 +144,7 @@
 
 			<!-- Send message -->
 			<div class="w-full flex">
-				<input onkeypress={enterCheck} type="text" bind:value={message} bind:this={inputElement} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" />
+				<input onkeypress={enterCheck} type="text" bind:value={message} bind:this={inputElement} placeholder="Type a message" class="w-full px-4 py-2 text-white outline-0" onkeydown={handlePasteImage} />
 				<button onclick={toggleEmojiKeyboard} class="flex flex-col justify-center items-center cursor-pointer hover:text-white">
 					<IconEmoji />
 				</button>
