@@ -100,7 +100,7 @@
 			<div class="w-full relative">
 				<button onclick={toggleServerEdit} class="w-full rounded rounded-tr-lg p-1 outline-0">
 					<div class="flex justify-between font-semibold w-full cursor-pointer text-left overflow-ellipsis overflow-hidden overflow">
-						{(server as Server).name}
+						{server.name}
 						{#if isServerEditOpen}
 							<IconClose class="text-sm mt-0.5" />
 						{:else}
