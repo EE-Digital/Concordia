@@ -14,11 +14,38 @@
 	const { message, hideAuthor = false }: Props = $props();
 
 	const parsedMessage = $derived(parseMarkdownToHtml(message.text as string));
+	const isEmpty = $derived(message.text === undefined || message.text.length === 0);
+
+	function timeString(date: Date) {
+		return date.toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+	}
+
+	function fullTimeString(date: Date) {
+		const today = new Date();
+		const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+		if (isToday) {
+			return timeString(date);
+		}
+		const isYesterday = date.getDate() === today.getDate() - 1 && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+		if (isYesterday) {
+			return "yesterday " + timeString(date);
+		}
+
+		const dateString = date.toLocaleDateString([], {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		});
+		return dateString + " " + timeString(date);
+	}
 </script>
 
-<div class="mx-2 pl-2.5 rounded hover:bg-neutral-900">
+<div class="mx-2 pl-2.5 rounded hover:bg-neutral-900 group">
 	{#if !hideAuthor}
-		<div class="flex items-center mt-3 mb-1">
+		<div class="flex items-center pt-3 mb-1 gap-2">
 			{#if message.author.profileUrl}
 				<img src={message.author.profileUrl} alt="" />
 			{:else}
@@ -26,11 +53,23 @@
 					{message.author.name.slice(0, 2)}
 				</div>
 			{/if}
-			<h1 class="ml-2 font-semibold">{message.author.name}</h1>
+			<div class="flex items-baseline gap-1">
+				<div class="font-semibold">{message.author.name}</div>
+				<div class="text-neutral-400 text-xs mr-2">
+					{fullTimeString(new Date(message.createdAt))}
+				</div>
+			</div>
 		</div>
 	{/if}
 
-	<div class="text-neutral-200">{@html parsedMessage}</div>
+	<div class="flex justify-between">
+		<div class="text-neutral-200">{@html parsedMessage}</div>
+		{#if hideAuthor && !isEmpty}
+			<div class="text-neutral-400 text-xs mr-2 mt-1 invisible group-hover:visible">
+				{timeString(new Date(message.createdAt))}
+			</div>
+		{/if}
+	</div>
 
 	<div class="flex flex-col gap-2 mb-1">
 		{#each message.files as file}

@@ -52,7 +52,11 @@
 		const normalized = query.toLowerCase().trim();
 		if (normalized.length === 0) return [];
 
-		return EmojiOrdering.flatMap((group) => group.emoji.filter((emoji) => emoji.shortcodes.some((keyword) => keyword.includes(normalized))));
+		return EmojiOrdering.flatMap((group) => group.emoji.filter((emoji) => emoji.shortcodes.some((keyword) => keyword.includes(normalized)))).reduce((acc, emoji) => {
+			if (acc.find((e) => e.shortcodes.join("-") === emoji.shortcodes.join("-"))) return acc;
+			acc.push(emoji);
+			return acc;
+		}, [] as EmojiMetadata[]);
 	}
 
 	const searchResults = $derived(runSearch(searchQuery));
