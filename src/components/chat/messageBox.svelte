@@ -112,7 +112,7 @@
 			ctx.putImageData(imageData, 0, 0);
 
 			// Convert image to PNG image
-			const blobData: Blob = await new Promise((resolve) => drawCanvas.toBlob(resolve, "image/png"));
+			const blobData: Blob = await new Promise((resolve) => drawCanvas.toBlob(resolve as BlobCallback, "image/png"));
 			const file = new File([blobData], "clipboard.png", { type: "image/png" });
 
 			// Push to upload file list

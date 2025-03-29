@@ -17,9 +17,14 @@ const twemojiOptions = {
 	className: "w-5 h-5 inline",
 };
 
-export const parseEmoji = (text: string) => {
-	return twemoji.parse(text, twemojiOptions);
+export const parseEmoji = (text: string, big = false) => {
+	return twemoji.parse(text, {
+		...twemojiOptions,
+		className: big ? "w-8 h-8 inline" : twemojiOptions.className,
+	});
 };
+
+export const isOnlyEmojiString = (text: string): boolean => /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|\s*)+$/.test(text);
 
 const codepointRedirects: Record<string, string> = {
 	"23-fe0f-20e3": "23-20e3",

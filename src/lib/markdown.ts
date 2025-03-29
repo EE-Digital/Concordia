@@ -1,5 +1,5 @@
 import insane, { type SanitizeOptions } from "insane";
-import { parseEmoji } from "./emoji";
+import { isOnlyEmojiString, parseEmoji } from "./emoji";
 
 const escapeHtml = (unsafe: string) => {
 	if (unsafe) return unsafe.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -57,7 +57,8 @@ const insaneConfig: SanitizeOptions = {
 
 export function parseMarkdownToHtml(markdown: string): string {
 	const escaped = escapeHtml(markdown);
-	const emojiParsed = parseEmoji(escaped);
+	const isOnlyEmoji = isOnlyEmojiString(escaped);
+	const emojiParsed = parseEmoji(escaped, isOnlyEmoji);
 	const markdownParsed = parseMakrdown(emojiParsed);
 
 	return insane(markdownParsed, insaneConfig);
