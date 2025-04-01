@@ -43,7 +43,8 @@
 	}
 </script>
 
-<div class="mx-2 pl-2.5 rounded hover:bg-neutral-900 group">
+<div class="mx-2 pl-2.5 rounded group">
+	<!-- Author -->
 	{#if !hideAuthor}
 		<div class="flex items-center pt-3 mb-1 gap-2">
 			{#if message.author.profileUrl}
@@ -62,15 +63,17 @@
 		</div>
 	{/if}
 
+	<!-- Message -->
 	<div class="flex justify-between">
 		<div class="text-neutral-200">{@html parsedMessage}</div>
-		{#if hideAuthor && !isEmpty}
+		{#if !isEmpty}
 			<div class="text-neutral-400 text-xs mr-2 mt-1 invisible group-hover:visible">
 				{timeString(new Date(message.createdAt))}
 			</div>
 		{/if}
 	</div>
 
+	<!-- Files -->
 	<div class="flex flex-col gap-2 mb-1">
 		{#each message.files as file}
 			{#if file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/webp"}
@@ -92,4 +95,25 @@
 			{/if}
 		{/each}
 	</div>
+
+	<!-- Polls -->
+	{#if message.polls.length > 0}
+		<div class="flex flex-col gap-2 mb-1">
+			{#each message.polls as poll}
+				<div class="bg-zinc-900 p-3 rounded flex flex-col gap-2">
+					<div>
+						<div class="text-xs text-neutral-400">Poll by <span class="hover:underline hover:text-neutral-300 cursor-pointer">{message.author.name}</span></div>
+						<div class="text-xl font-bold">{poll.title}</div>
+					</div>
+					<div class="flex flex-col gap-2">
+						{#each poll.options as option}
+							<button class="bg-zinc-800 px-3 py-2 rounded text-left cursor-pointer hover:bg-zinc-700" >
+								{option.title}
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </div>

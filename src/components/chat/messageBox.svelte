@@ -9,6 +9,7 @@
 	import IconPool from "~icons/lucide/chart-pie";
 	import IconSwords from "~icons/lucide/swords";
 	import IconEmoji from "~icons/lucide/smile";
+	import CreatePoll from "./CreatePoll.svelte";
 
 	type Props = {
 		server: Server;
@@ -18,9 +19,22 @@
 	const { server, channelId }: Props = $props();
 
 	let isEmojiKeyboardVisible = $state(false);
+	let isPollEditorVisible = $state(false);
 	let message = $state("");
 	let inputElement: HTMLInputElement;
 	let attachments: File[] = $state([]);
+
+
+	const sendMessageRaw = async (data: FormData) => {
+		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
+			method: "POST",
+			headers: {
+				authorization: server.token,
+			},
+			body: data,
+		});
+		return response;
+	}
 
 	const sendMessage = async () => {
 		message = message.trim();
@@ -31,18 +45,20 @@
 		formData.append("message", message);
 		attachments.forEach((file) => formData.append("file", file));
 
-		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
-			method: "POST",
-			headers: {
-				authorization: server.token,
-			},
-			body: formData,
-		});
+		const response = await sendMessageRaw(formData);
 
 		attachments = [];
 		message = "";
 		if (response.status != 200) console.error("Failed sending message");
 	};
+
+	const sendPoll = async (question: string, options: string[], isMultiple: boolean) => {
+		if (isPollEditorVisible) isPollEditorVisible = false;
+		const formData = new FormData();
+		formData.append("poll", JSON.stringify({ question, options, isMultiple }));
+		const response = await sendMessageRaw(formData);
+		return response.status === 200;
+	}
 
 	const enterCheck = (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
@@ -51,8 +67,13 @@
 		}
 	};
 
+	const createPoll = () => {
+		if (isPollEditorVisible) return;
+		isPollEditorVisible = true;
+	};
+
 	let fileInput: HTMLInputElement;
-	const trrigetAttachment = () => {
+	const triggerAttachment = () => {
 		fileInput.click();
 	};
 
@@ -160,7 +181,7 @@
 				<IconImage />
 				GIF
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={() => console.log("TODO")}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={createPoll}>
 				<IconPool />
 				Poll
 			</button>
@@ -168,7 +189,7 @@
 				<IconSwords />
 				Game
 			</button>
-			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={trrigetAttachment}>
+			<button class="border-1 border-dashed rounded-full flex px-3 py-1 text-xs gap-2 items-center cursor-pointer text-neutral-300 hover:text-white hover:bg-zinc-900" onclick={triggerAttachment}>
 				<IconFile />
 				Attachment
 			</button>
@@ -180,6 +201,11 @@
 		<div class="absolute right-5 -top-1 transfrom -translate-y-full h-100">
 			<EmojiKeyboard onselect={insertEmoji} close={closeEmojiKeyboard} />
 		</div>
+	{/if}
+
+	<!-- Poll Editor -->
+	{#if isPollEditorVisible}
+		<CreatePoll bind:open={isPollEditorVisible} onsubmit={sendPoll} />
 	{/if}
 </div>
 
