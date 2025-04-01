@@ -20,17 +20,17 @@
 
 <svelte:document onkeydown={escKeyHandler} />
 
-<main>
+<main class="h-svh">
 	<div class="w-full bg-zinc-800 flex items-center justify-start gap-5 pt-1 px-4 pb-0.5 mb-1.5">
 		<button class="cursor-pointer" onclick={exitSettings}>
 			<ArrowBack />
 		</button>
 		<h1>Settings</h1>
 	</div>
-	<div class="flex">
+	<div class="flex h-full">
 		<SideBar />
 
-		<div class="px-4 py-2 w-full">
+		<div class="px-4 py-2 w-full h-full">
 			{@render children()}
 		</div>
 	</div>

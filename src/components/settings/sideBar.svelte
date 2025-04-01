@@ -2,6 +2,7 @@
 	import { page } from "$app/state";
 
 	const settings = [
+		{ name: "General", path: "/settings/general" },
 		{ name: "Servers", path: "/settings/servers" },
 		{ name: "Identities", path: "/settings/identities" },
 	];
