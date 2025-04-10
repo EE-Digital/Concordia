@@ -2,23 +2,19 @@
 
 ## Work In Progress
 
-List of all things that are being worked on
-
-- [ ] Windows installer being marked as a virus (???)
-
 ### Messaging
 
 - [x] Messaging window
-- [ ] Websocket for message updates
+- [x] Websocket for message updates
 - [x] Reading messages
-- [ ] Sending messages
+- [x] Sending messages
 - [ ] Editing messages
 - [ ] Cache messages
 - [ ] Default profile picture with random color background
 
 ### Server settings
 
-- [ ] Server edit UI
-- [ ] Modify server config
+- [x] Server edit UI
+- [x] Modify server config
 - [ ] Manage roles
 - [ ] Manage users
