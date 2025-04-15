@@ -23,18 +23,22 @@
 	let message = $state("");
 	let inputElement: HTMLInputElement;
 	let attachments: File[] = $state([]);
-
+	let error = $state("");
 
 	const sendMessageRaw = async (data: FormData) => {
-		const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
-			method: "POST",
-			headers: {
-				authorization: server.token,
-			},
-			body: data,
-		});
-		return response;
-	}
+		try {
+			const response = await fetch(`${server.serverUrl}/channels/${channelId}/messages`, {
+				method: "POST",
+				headers: {
+					authorization: server.token,
+				},
+				body: data,
+			});
+			return response;
+		} catch (e) {
+			return { status: 1 };
+		}
+	};
 
 	const sendMessage = async () => {
 		message = message.trim();
@@ -46,10 +50,16 @@
 		attachments.forEach((file) => formData.append("file", file));
 
 		const response = await sendMessageRaw(formData);
-
-		attachments = [];
-		message = "";
-		if (response.status != 200) console.error("Failed sending message");
+		if (response.status != 200) {
+			console.error("Failed sending message");
+			error = "[ERROR] Message couldn't reach the server";
+			setTimeout(() => {
+				error = "";
+			}, 2000);
+		} else {
+			attachments = [];
+			message = "";
+		}
 	};
 
 	const sendPoll = async (question: string, options: string[], isMultiple: boolean) => {
@@ -57,8 +67,9 @@
 		const formData = new FormData();
 		formData.append("poll", JSON.stringify({ question, options, isMultiple }));
 		const response = await sendMessageRaw(formData);
+
 		return response.status === 200;
-	}
+	};
 
 	const enterCheck = (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
@@ -143,9 +154,13 @@
 	}
 </script>
 
-<div class="w-full px-1 flex pr-5 relative">
+<div class="w-full px-1 flex flex-col pr-5 relative">
 	<!-- Do not delete, used for getting Attachment -->
 	<input type="file" bind:this={fileInput} style="display:none;" onchange={handleAttachment} multiple />
+	<!-- Error box -->
+	<p class="w-full h-8 p-1 bg-red-500 rounded text-white" style={error.length > 0 ? "" : "display: none;"}>
+		{error}
+	</p>
 	<div class="w-full flex flex-col overflow-hidden">
 		<!-- Message Box -->
 		<div class="w-full flex flex-col bg-zinc-800 rounded-lg">

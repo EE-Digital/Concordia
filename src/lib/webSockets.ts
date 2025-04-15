@@ -1,6 +1,6 @@
 import { serverList } from "../components/servers/getServers.svelte";
 import type { Message as T_Message } from "../types/Message";
-import { activeChannel, messages, pushMessage } from "../components/store.svelte";
+import { activeChannel, pushMessage } from "../components/store.svelte";
 import WebSocket, { type Message } from "@tauri-apps/plugin-websocket";
 
 export default function initWebSockets() {
@@ -22,6 +22,8 @@ export async function createWebsocket(server: string) {
 	ws.addListener((event: Message) => {
 		handleWebsocketMessage(event);
 	});
+
+	ws;
 
 	window.addEventListener("beforeunload", () => {
 		ws.disconnect();
@@ -56,6 +58,7 @@ const handleWebsocketMessage = async (event: Message) => {
 					console.log("[WS] Got new message");
 					pushMessage(data.data.message);
 				}
+				break;
 		}
 	} catch (e) {
 		console.log("[WS] Got non JSON message");
