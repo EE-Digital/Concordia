@@ -18,3 +18,4 @@
 - [x] Modify server config
 - [ ] Manage roles
 - [ ] Manage users
+- [ ] Server config
